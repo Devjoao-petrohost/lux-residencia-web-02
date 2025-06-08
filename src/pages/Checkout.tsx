@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -33,17 +32,17 @@ const Checkout = () => {
 
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Preços simulados por quarto
+  // Preços simulados por quarto em Kwanza
   const roomPrices: { [key: string]: number } = {
-    'Suíte Presidencial': 599,
-    'Suíte Executive': 399,
-    'Suíte Premium': 299,
-    'Suíte Classic': 199,
-    'Suíte Garden': 349,
-    'Suíte Family': 449
+    'Suíte Presidencial': 299000,
+    'Suíte Executive': 199000,
+    'Suíte Premium': 149000,
+    'Suíte Classic': 99000,
+    'Suíte Garden': 174000,
+    'Suíte Family': 224000
   };
 
-  const pricePerNight = roomPrices[selectedSuite] || 299;
+  const pricePerNight = roomPrices[selectedSuite] || 149000;
 
   const calculateNights = () => {
     if (formData.dataEntrada && formData.dataSaida) {
@@ -131,30 +130,28 @@ const Checkout = () => {
     <div className="min-h-screen">
       <Header />
       
-      <main className="pt-20">
+      <main className="pt-32">
         <section className="py-16 bg-off-white">
-          <div className="container mx-auto px-6 max-w-4xl">
-            <div className="text-center mb-8">
-              <h1 className="font-playfair text-4xl md:text-5xl font-bold text-charcoal mb-4">
+          <div className="container max-w-6xl">
+            <div className="text-center mb-12">
+              <h1 className="font-playfair text-4xl md:text-5xl font-bold text-charcoal mb-6">
                 Checkout - Finalizar Reserva
               </h1>
               {selectedSuite && (
-                <p className="font-inter text-xl text-stone-grey">
+                <p className="font-sora text-xl text-stone-grey">
                   Você selecionou: <strong className="text-charcoal">{selectedSuite}</strong>
                 </p>
               )}
             </div>
             
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid lg:grid-cols-3 gap-12">
               {/* Formulário Principal */}
-              <div className="md:col-span-2 bg-pure-white p-8">
-                <form onSubmit={handleSubmit} className="space-y-8">
-                  <div>
-                    <h2 className="font-playfair text-2xl font-bold text-charcoal mb-6">
-                      Dados do Hóspede
-                    </h2>
+              <div className="lg:col-span-2 bg-pure-white p-8 shadow-lg">
+                <form onSubmit={handleSubmit} className="checkout-form">
+                  <div className="form-section">
+                    <h2>Dados do Hóspede</h2>
                     
-                    <div className="grid md:grid-cols-2 gap-6">
+                    <div className="grid md:grid-cols-2 gap-8">
                       <div className="floating-label">
                         <input
                           type="text"
@@ -232,12 +229,10 @@ const Checkout = () => {
                     </div>
                   </div>
 
-                  <div>
-                    <h2 className="font-playfair text-2xl font-bold text-charcoal mb-6">
-                      Detalhes da Reserva
-                    </h2>
+                  <div className="form-section">
+                    <h2>Detalhes da Reserva</h2>
                     
-                    <div className="grid md:grid-cols-3 gap-6">
+                    <div className="grid md:grid-cols-3 gap-8">
                       <div className="floating-label">
                         <input
                           type="date"
@@ -268,7 +263,6 @@ const Checkout = () => {
                           name="numeroHospedes"
                           value={formData.numeroHospedes}
                           onChange={handleInputChange}
-                          className="w-full px-0 py-3 text-charcoal bg-transparent border-0 border-b border-stone-grey focus:border-charcoal focus:outline-none transition-colors duration-300"
                         >
                           <option value="1">1 Hóspede</option>
                           <option value="2">2 Hóspedes</option>
@@ -281,12 +275,10 @@ const Checkout = () => {
                     </div>
                   </div>
 
-                  <div>
-                    <h2 className="font-playfair text-2xl font-bold text-charcoal mb-6">
-                      Dados de Pagamento
-                    </h2>
+                  <div className="form-section">
+                    <h2>Dados de Pagamento</h2>
                     
-                    <div className="grid md:grid-cols-2 gap-6">
+                    <div className="grid md:grid-cols-2 gap-8">
                       <div className="md:col-span-2 floating-label">
                         <input
                           type="text"
@@ -352,7 +344,6 @@ const Checkout = () => {
                       onChange={handleInputChange}
                       placeholder=" "
                       rows={4}
-                      className="w-full px-0 py-3 text-charcoal bg-transparent border-0 border-b border-stone-grey focus:border-charcoal focus:outline-none transition-colors duration-300 resize-none"
                     />
                     <label htmlFor="observacoes">Observações Especiais</label>
                   </div>
@@ -360,45 +351,43 @@ const Checkout = () => {
                   <button
                     type="submit"
                     disabled={isProcessing}
-                    className="w-full bg-charcoal text-pure-white py-4 font-inter font-semibold text-lg hover:bg-opacity-90 transition-colors duration-300 disabled:opacity-50"
+                    className="btn-primary w-full py-4 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isProcessing ? 'Processando Pagamento...' : `Pagar €${totalAmount}`}
+                    {isProcessing ? 'Processando Pagamento...' : `Pagar ${totalAmount.toLocaleString('pt-AO')} Kz`}
                   </button>
                 </form>
               </div>
 
               {/* Resumo da Reserva */}
-              <div className="bg-pure-white p-6 h-fit">
-                <h3 className="font-playfair text-xl font-bold text-charcoal mb-4">
+              <div className="bg-pure-white p-8 h-fit shadow-lg">
+                <h3 className="font-playfair text-2xl font-bold text-charcoal mb-6">
                   Resumo da Reserva
                 </h3>
                 
-                <div className="space-y-3 text-sm">
-                  <div className="flex justify-between">
+                <div className="space-y-4 font-sora">
+                  <div className="flex justify-between border-b border-stone-grey pb-2">
                     <span className="text-stone-grey">Suíte:</span>
                     <span className="text-charcoal font-medium">{selectedSuite}</span>
                   </div>
                   
-                  <div className="flex justify-between">
+                  <div className="flex justify-between border-b border-stone-grey pb-2">
                     <span className="text-stone-grey">Preço por noite:</span>
-                    <span className="text-charcoal">€{pricePerNight}</span>
+                    <span className="text-charcoal">{pricePerNight.toLocaleString('pt-AO')} Kz</span>
                   </div>
                   
-                  <div className="flex justify-between">
+                  <div className="flex justify-between border-b border-stone-grey pb-2">
                     <span className="text-stone-grey">Número de noites:</span>
                     <span className="text-charcoal">{calculateNights()}</span>
                   </div>
                   
-                  <div className="flex justify-between">
+                  <div className="flex justify-between border-b border-stone-grey pb-2">
                     <span className="text-stone-grey">Hóspedes:</span>
                     <span className="text-charcoal">{formData.numeroHospedes}</span>
                   </div>
                   
-                  <hr className="border-stone-grey" />
-                  
-                  <div className="flex justify-between font-bold text-lg">
+                  <div className="flex justify-between font-bold text-xl pt-4">
                     <span className="text-charcoal">Total:</span>
-                    <span className="text-charcoal">€{totalAmount}</span>
+                    <span className="text-charcoal">{totalAmount.toLocaleString('pt-AO')} Kz</span>
                   </div>
                 </div>
               </div>

@@ -54,28 +54,126 @@
   }
 
   body {
-    @apply bg-off-white text-charcoal font-inter;
+    @apply bg-off-white text-charcoal font-sora;
     font-feature-settings: "rlig" 1, "calt" 1;
+    line-height: 1.6;
   }
 
   h1, h2, h3 {
     @apply font-playfair;
   }
 
+  /* Floating Label Styles */
   .floating-label {
-    @apply relative;
+    @apply relative mb-6;
   }
 
-  .floating-label input {
-    @apply w-full px-0 py-3 text-charcoal bg-transparent border-0 border-b border-stone-grey focus:border-charcoal focus:outline-none transition-colors duration-300;
+  .floating-label input,
+  .floating-label select,
+  .floating-label textarea {
+    @apply w-full px-0 py-4 text-charcoal bg-transparent border-0 border-b-2 border-stone-grey focus:border-charcoal focus:outline-none transition-colors duration-300;
   }
 
   .floating-label label {
-    @apply absolute left-0 top-3 text-stone-grey transition-all duration-300 pointer-events-none;
+    @apply absolute left-0 top-4 text-stone-grey transition-all duration-300 pointer-events-none;
   }
 
   .floating-label input:focus ~ label,
-  .floating-label input:not(:placeholder-shown) ~ label {
-    @apply transform -translate-y-6 scale-75 text-charcoal;
+  .floating-label input:not(:placeholder-shown) ~ label,
+  .floating-label select:focus ~ label,
+  .floating-label select:not([value=""]) ~ label,
+  .floating-label textarea:focus ~ label,
+  .floating-label textarea:not(:placeholder-shown) ~ label {
+    @apply transform -translate-y-6 scale-90 text-charcoal;
+  }
+
+  /* Global spacing fixes */
+  section {
+    @apply relative z-10;
+  }
+
+  .container {
+    @apply mx-auto px-6 max-w-7xl;
+  }
+
+  /* Card spacing fixes */
+  .accommodation-card {
+    @apply bg-pure-white p-0 overflow-hidden;
+  }
+
+  .accommodation-card img {
+    @apply w-full h-64 object-cover;
+  }
+
+  .accommodation-card-content {
+    @apply p-6;
+  }
+
+  /* Button fixes */
+  .btn-primary {
+    @apply bg-charcoal text-pure-white px-6 py-3 font-sora font-semibold transition-all duration-300 hover:bg-opacity-90 inline-block text-center;
+  }
+
+  .btn-secondary {
+    @apply border-2 border-charcoal text-charcoal px-6 py-3 font-sora font-semibold transition-all duration-300 hover:bg-charcoal hover:text-pure-white inline-block text-center;
+  }
+
+  /* Form improvements */
+  .checkout-form {
+    @apply space-y-8;
+  }
+
+  .form-section {
+    @apply mb-12;
+  }
+
+  .form-section h2 {
+    @apply font-playfair text-2xl font-bold text-charcoal mb-8 border-b border-stone-grey pb-4;
+  }
+
+  /* Grid fixes */
+  .grid-accommodations {
+    @apply grid md:grid-cols-2 lg:grid-cols-3 gap-8;
+  }
+
+  /* Header fixes */
+  .header-nav {
+    @apply flex items-center space-x-8;
+  }
+
+  .header-nav a {
+    @apply text-charcoal hover:text-stone-grey transition-colors duration-300 font-sora font-medium;
+  }
+
+  /* Footer spacing */
+  .footer-content {
+    @apply grid md:grid-cols-4 gap-8 mb-8;
+  }
+
+  /* Z-index management */
+  .header-fixed {
+    @apply z-50;
+  }
+
+  .hero-section {
+    @apply z-10;
+  }
+
+  .modal-overlay {
+    @apply z-60;
+  }
+
+  /* Prevent text overlap */
+  .text-content {
+    @apply relative z-20;
+  }
+
+  /* Image overlay fixes */
+  .image-container {
+    @apply relative overflow-hidden;
+  }
+
+  .image-overlay {
+    @apply absolute inset-0 bg-black bg-opacity-0 transition-opacity duration-300 hover:bg-opacity-10;
   }
 }

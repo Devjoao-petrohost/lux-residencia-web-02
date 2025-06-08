@@ -17,52 +17,43 @@ const Header = () => {
   }, []);
 
   const headerClass = isHomePage 
-    ? `fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+    ? `fixed top-0 left-0 right-0 header-fixed transition-all duration-300 ${
         isScrolled 
-          ? 'bg-off-white shadow-sm' 
+          ? 'bg-off-white shadow-lg' 
           : 'bg-transparent'
       }`
-    : 'bg-off-white shadow-sm';
+    : 'bg-off-white shadow-lg';
 
   return (
     <header className={headerClass}>
-      <div className="container mx-auto px-6 py-4">
+      <div className="container py-6">
         <div className="flex items-center justify-between">
-          <Link to="/" className="font-playfair text-2xl font-bold text-charcoal">
+          <Link to="/" className="font-playfair text-3xl font-bold text-charcoal">
             Maspe Residencial
           </Link>
           
-          <nav className="hidden md:flex space-x-8">
-            <Link 
-              to="/" 
-              className="text-charcoal hover:text-stone-grey transition-colors duration-300 font-inter font-medium"
-            >
+          <nav className="header-nav">
+            <Link to="/">
               Início
             </Link>
-            <a 
-              href="#sobre" 
-              className="text-charcoal hover:text-stone-grey transition-colors duration-300 font-inter font-medium"
-            >
+            <a href="#sobre">
               Sobre
             </a>
-            <Link 
-              to="/acomodacoes" 
-              className="text-charcoal hover:text-stone-grey transition-colors duration-300 font-inter font-medium"
-            >
+            <Link to="/acomodacoes">
               Acomodações
             </Link>
-            <a 
-              href="#servicos" 
-              className="text-charcoal hover:text-stone-grey transition-colors duration-300 font-inter font-medium"
-            >
+            <a href="#servicos">
               Serviços
             </a>
-            <a 
-              href="#contato" 
-              className="text-charcoal hover:text-stone-grey transition-colors duration-300 font-inter font-medium"
-            >
+            <a href="#contato">
               Contato
             </a>
+            <Link 
+              to="/admin" 
+              className="bg-charcoal text-pure-white px-4 py-2 font-sora font-medium hover:bg-opacity-90 transition-colors duration-300"
+            >
+              Login Admin
+            </Link>
           </nav>
         </div>
       </div>

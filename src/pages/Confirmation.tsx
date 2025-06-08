@@ -40,12 +40,12 @@ const Confirmation = () => {
     return (
       <div className="min-h-screen">
         <Header />
-        <main className="pt-20 py-16">
-          <div className="container mx-auto px-6 text-center">
+        <main className="pt-32 py-16">
+          <div className="container text-center">
             <h1 className="font-playfair text-4xl font-bold text-charcoal mb-4">
               Reserva não encontrada
             </h1>
-            <Link to="/" className="text-charcoal hover:text-stone-grey">
+            <Link to="/" className="text-charcoal hover:text-stone-grey font-sora">
               Voltar ao início
             </Link>
           </div>
@@ -59,41 +59,41 @@ const Confirmation = () => {
     <div className="min-h-screen">
       <Header />
       
-      <main className="pt-20">
+      <main className="pt-32">
         <section className="py-16 bg-off-white">
-          <div className="container mx-auto px-6 max-w-4xl">
+          <div className="container max-w-4xl">
             {/* Confirmação */}
-            <div className="text-center mb-12">
-              <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="text-center mb-16">
+              <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-8 text-2xl font-bold">
                 ✓
               </div>
-              <h1 className="font-playfair text-4xl md:text-5xl font-bold text-charcoal mb-4">
+              <h1 className="font-playfair text-4xl md:text-5xl font-bold text-charcoal mb-6">
                 Reserva Confirmada!
               </h1>
-              <p className="font-inter text-xl text-stone-grey">
+              <p className="font-sora text-xl text-stone-grey">
                 Pagamento processado com sucesso. Sua reserva foi confirmada.
               </p>
             </div>
 
             {/* Fatura/Recibo */}
-            <div className="bg-pure-white p-8 mb-8" id="invoice">
-              <div className="border-b border-stone-grey pb-6 mb-6">
+            <div className="bg-pure-white p-12 mb-12 shadow-lg" id="invoice">
+              <div className="border-b-2 border-stone-grey pb-8 mb-8">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h2 className="font-playfair text-3xl font-bold text-charcoal mb-2">
+                    <h2 className="font-playfair text-3xl font-bold text-charcoal mb-4">
                       Maspe Residencial
                     </h2>
-                    <p className="text-stone-grey">
+                    <p className="text-stone-grey font-sora">
                       Sofisticação que Acolhe<br />
                       Rua da Elegância, 123<br />
-                      Lisboa, Portugal
+                      Luanda, Angola
                     </p>
                   </div>
                   <div className="text-right">
-                    <h3 className="font-inter text-xl font-bold text-charcoal mb-2">
+                    <h3 className="font-sora text-xl font-bold text-charcoal mb-4">
                       FATURA/RECIBO
                     </h3>
-                    <p className="text-stone-grey text-sm">
+                    <p className="text-stone-grey text-sm font-sora">
                       Nº: {booking.id}<br />
                       Data: {new Date(booking.bookingDate).toLocaleDateString('pt-PT')}<br />
                       Transação: {booking.transactionId}
@@ -103,9 +103,9 @@ const Confirmation = () => {
               </div>
 
               {/* Dados do Cliente */}
-              <div className="mb-6">
-                <h4 className="font-inter font-bold text-charcoal mb-3">Dados do Hóspede:</h4>
-                <div className="text-stone-grey">
+              <div className="mb-8">
+                <h4 className="font-sora font-bold text-charcoal mb-4 text-lg">Dados do Hóspede:</h4>
+                <div className="text-stone-grey font-sora space-y-2">
                   <p><strong>Nome:</strong> {booking.guest.nomeCompleto}</p>
                   <p><strong>Email:</strong> {booking.guest.email}</p>
                   <p><strong>Telefone:</strong> {booking.guest.telefone}</p>
@@ -116,30 +116,30 @@ const Confirmation = () => {
               </div>
 
               {/* Detalhes da Reserva */}
-              <div className="mb-6">
-                <h4 className="font-inter font-bold text-charcoal mb-3">Detalhes da Reserva:</h4>
+              <div className="mb-8">
+                <h4 className="font-sora font-bold text-charcoal mb-4 text-lg">Detalhes da Reserva:</h4>
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-stone-grey">
-                        <th className="text-left py-2 font-inter font-bold text-charcoal">Descrição</th>
-                        <th className="text-center py-2 font-inter font-bold text-charcoal">Quantidade</th>
-                        <th className="text-right py-2 font-inter font-bold text-charcoal">Preço Unit.</th>
-                        <th className="text-right py-2 font-inter font-bold text-charcoal">Total</th>
+                      <tr className="border-b-2 border-stone-grey">
+                        <th className="text-left py-4 font-sora font-bold text-charcoal">Descrição</th>
+                        <th className="text-center py-4 font-sora font-bold text-charcoal">Quantidade</th>
+                        <th className="text-right py-4 font-sora font-bold text-charcoal">Preço Unit.</th>
+                        <th className="text-right py-4 font-sora font-bold text-charcoal">Total</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
-                        <td className="py-3 text-stone-grey">
+                        <td className="py-4 text-stone-grey font-sora">
                           {booking.suite}<br />
                           <small>
                             {new Date(booking.guest.dataEntrada).toLocaleDateString('pt-PT')} - {new Date(booking.guest.dataSaida).toLocaleDateString('pt-PT')}<br />
                             {booking.guest.numeroHospedes} hóspede(s)
                           </small>
                         </td>
-                        <td className="py-3 text-center text-stone-grey">{booking.nights} noite(s)</td>
-                        <td className="py-3 text-right text-stone-grey">€{booking.pricePerNight}</td>
-                        <td className="py-3 text-right text-charcoal font-bold">€{booking.totalAmount}</td>
+                        <td className="py-4 text-center text-stone-grey font-sora">{booking.nights} noite(s)</td>
+                        <td className="py-4 text-right text-stone-grey font-sora">{booking.pricePerNight.toLocaleString('pt-AO')} Kz</td>
+                        <td className="py-4 text-right text-charcoal font-bold font-sora">{booking.totalAmount.toLocaleString('pt-AO')} Kz</td>
                       </tr>
                     </tbody>
                   </table>
@@ -147,12 +147,12 @@ const Confirmation = () => {
               </div>
 
               {/* Total */}
-              <div className="border-t border-stone-grey pt-4">
-                <div className="flex justify-between items-center">
-                  <span className="font-inter text-lg text-stone-grey">Total Pago:</span>
-                  <span className="font-playfair text-2xl font-bold text-charcoal">€{booking.totalAmount}</span>
+              <div className="border-t-2 border-stone-grey pt-6">
+                <div className="flex justify-between items-center mb-4">
+                  <span className="font-sora text-xl text-stone-grey">Total Pago:</span>
+                  <span className="font-playfair text-3xl font-bold text-charcoal">{booking.totalAmount.toLocaleString('pt-AO')} Kz</span>
                 </div>
-                <p className="text-sm text-stone-grey mt-2">
+                <p className="text-sm text-stone-grey font-sora">
                   Método de Pagamento: Cartão de Crédito<br />
                   Status: <span className="text-green-600 font-bold">PAGO</span>
                 </p>
@@ -160,34 +160,34 @@ const Confirmation = () => {
 
               {/* Observações */}
               {booking.guest.observacoes && (
-                <div className="mt-6 pt-4 border-t border-stone-grey">
-                  <h4 className="font-inter font-bold text-charcoal mb-2">Observações:</h4>
-                  <p className="text-stone-grey">{booking.guest.observacoes}</p>
+                <div className="mt-8 pt-6 border-t border-stone-grey">
+                  <h4 className="font-sora font-bold text-charcoal mb-3">Observações:</h4>
+                  <p className="text-stone-grey font-sora">{booking.guest.observacoes}</p>
                 </div>
               )}
             </div>
 
             {/* Ações */}
-            <div className="flex flex-col md:flex-row gap-4 justify-center">
+            <div className="flex flex-col md:flex-row gap-6 justify-center mb-16">
               <button
                 onClick={printInvoice}
-                className="bg-charcoal text-pure-white px-6 py-3 font-inter font-semibold hover:bg-opacity-90 transition-colors duration-300"
+                className="btn-primary"
               >
                 Imprimir Fatura
               </button>
               <Link
                 to="/"
-                className="bg-pure-white text-charcoal border border-charcoal px-6 py-3 font-inter font-semibold hover:bg-charcoal hover:text-pure-white transition-colors duration-300 text-center"
+                className="btn-secondary text-center"
               >
                 Voltar ao Início
               </Link>
             </div>
 
             {/* Informações adicionais */}
-            <div className="mt-12 text-center">
-              <p className="text-stone-grey text-sm">
+            <div className="text-center">
+              <p className="text-stone-grey text-sm font-sora">
                 Em caso de dúvidas, entre em contato conosco através do email <strong>reservas@masperesidencial.com</strong><br />
-                ou pelo telefone <strong>+351 21 000 0000</strong>
+                ou pelo telefone <strong>+244 000 000 000</strong>
               </p>
             </div>
           </div>

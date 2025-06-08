@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Accommodations from "./pages/Accommodations";
 import Checkout from "./pages/Checkout";
 import Confirmation from "./pages/Confirmation";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/acomodacoes" element={<Accommodations />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/confirmacao" element={<Confirmation />} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
