@@ -58,10 +58,10 @@ const FeaturedAccommodations = () => {
                 {room.description}
               </p>
               <Link 
-                to={`/reserva?suite=${encodeURIComponent(room.name)}`}
+                to={`/checkout?suite=${encodeURIComponent(room.name)}&id=${room.id}`}
                 className="inline-block bg-charcoal text-pure-white px-6 py-2 font-inter font-medium text-sm hover:bg-opacity-90 transition-colors duration-300"
               >
-                Solicitar Reserva
+                Reservar Agora
               </Link>
             </div>
           ))}

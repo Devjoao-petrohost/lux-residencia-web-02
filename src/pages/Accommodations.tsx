@@ -114,10 +114,10 @@ const Accommodations = () => {
                     </div>
                     
                     <Link 
-                      to={`/reserva?suite=${encodeURIComponent(room.name)}`}
+                      to={`/checkout?suite=${encodeURIComponent(room.name)}&id=${room.id}`}
                       className="block w-full bg-charcoal text-pure-white text-center py-3 font-inter font-semibold hover:bg-opacity-90 transition-colors duration-300"
                     >
-                      Solicitar Reserva
+                      Reservar Agora
                     </Link>
                   </div>
                 </div>
