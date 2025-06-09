@@ -74,7 +74,7 @@ const KeyFeatures = () => {
               className="card-servico text-center group hover:transform hover:scale-105 transition-all duration-300 animacao-fade-in"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className="icone-container bg-off-white border border-stone-grey p-6 mb-4 inline-flex items-center justify-center group-hover:bg-charcoal group-hover:shadow-lg transition-all duration-300">
+              <div className="icone-container bg-off-white p-6 mb-4 inline-flex items-center justify-center group-hover:bg-charcoal group-hover:shadow-lg transition-all duration-300">
                 <feature.icon className="w-8 h-8 text-charcoal group-hover:text-pure-white transition-colors duration-300" />
               </div>
               <h3 className="font-sora text-sm font-semibold text-charcoal mb-2 group-hover:text-stone-grey transition-colors duration-300">

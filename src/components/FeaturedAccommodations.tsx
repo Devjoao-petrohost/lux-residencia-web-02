@@ -57,7 +57,7 @@ const FeaturedAccommodations = () => {
           {accommodations.map((room, index) => (
             <div 
               key={room.id} 
-              className="card-acomodacao group animacao-fade-in"
+              className="card-acomodacao group animacao-fade-in border border-stone-grey hover:shadow-lg transition-all duration-300"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="container-imagem">
