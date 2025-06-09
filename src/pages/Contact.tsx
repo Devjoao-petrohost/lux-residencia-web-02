@@ -34,9 +34,8 @@ const Contact = () => {
                     <div>
                       <h3 className="font-sora text-lg font-bold text-charcoal mb-2">Endereço</h3>
                       <p className="font-sora text-stone-grey">
-                        Rua Amílcar Cabral, 123<br />
-                        Maianga, Luanda<br />
-                        Angola
+                        Luanda, Rua do Club das Nações Unidas,<br />  Casa Nº 500-14, junto do Viaducto da Corimba,<br />
+                         Bairro Corimba - Samba
                       </p>
                     </div>
                   </div>
