@@ -3,7 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Maspe Residencial Design System */
+/* Sistema de Design Maspe Residencial */
 
 @layer base {
   :root {
@@ -64,7 +64,25 @@
     @apply font-sora font-bold;
   }
 
-  /* Floating Label Styles */
+  /* Estilos de Animação e Micro-interações */
+  .animacao-fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fade-in-up 0.6s ease-out forwards;
+  }
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Estilos para Labels Flutuantes */
   .floating-label {
     @apply relative mb-6;
   }
@@ -88,7 +106,7 @@
     @apply transform -translate-y-6 scale-90 text-charcoal;
   }
 
-  /* Global spacing fixes */
+  /* Espaçamentos globais */
   section {
     @apply relative z-10;
   }
@@ -97,29 +115,37 @@
     @apply mx-auto px-4 lg:px-6 max-w-7xl;
   }
 
-  /* Card spacing fixes */
+  /* Estilos dos Cards de Acomodação */
   .accommodation-card {
-    @apply bg-pure-white p-0 overflow-hidden shadow-lg;
+    @apply bg-pure-white p-0 overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300;
+  }
+
+  .accommodation-card:hover {
+    @apply transform -translate-y-1;
   }
 
   .accommodation-card img {
-    @apply w-full h-48 lg:h-64 object-cover;
+    @apply w-full h-48 lg:h-64 object-cover transition-transform duration-300;
+  }
+
+  .accommodation-card:hover img {
+    @apply scale-105;
   }
 
   .accommodation-card-content {
     @apply p-4 lg:p-6;
   }
 
-  /* Button fixes */
+  /* Estilos dos Botões */
   .btn-primary {
-    @apply bg-charcoal text-pure-white px-4 lg:px-6 py-2 lg:py-3 font-sora font-semibold transition-all duration-300 hover:bg-opacity-90 inline-block text-center text-sm lg:text-base;
+    @apply bg-charcoal text-pure-white px-4 lg:px-6 py-2 lg:py-3 font-sora font-semibold transition-all duration-300 hover:bg-opacity-90 hover:shadow-lg inline-block text-center text-sm lg:text-base;
   }
 
   .btn-secondary {
-    @apply border-2 border-charcoal text-charcoal px-4 lg:px-6 py-2 lg:py-3 font-sora font-semibold transition-all duration-300 hover:bg-charcoal hover:text-pure-white inline-block text-center text-sm lg:text-base;
+    @apply border-2 border-charcoal text-charcoal px-4 lg:px-6 py-2 lg:py-3 font-sora font-semibold transition-all duration-300 hover:bg-charcoal hover:text-pure-white hover:shadow-lg inline-block text-center text-sm lg:text-base;
   }
 
-  /* Form improvements */
+  /* Estilos dos Formulários */
   .checkout-form {
     @apply space-y-6 lg:space-y-8;
   }
@@ -132,26 +158,34 @@
     @apply font-sora text-xl lg:text-2xl font-bold text-charcoal mb-6 lg:mb-8 border-b border-stone-grey pb-4;
   }
 
-  /* Grid fixes */
+  /* Estilos de Grid */
   .grid-accommodations {
     @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8;
   }
 
-  /* Header fixes - CRITICAL Z-INDEX FIX */
+  /* Estilos do Cabeçalho */
   .header-nav {
     @apply flex items-center space-x-6 lg:space-x-8;
   }
 
   .header-nav a {
-    @apply text-charcoal hover:text-stone-grey transition-colors duration-300 font-sora font-medium text-sm lg:text-base;
+    @apply text-charcoal hover:text-stone-grey transition-all duration-300 font-sora font-medium text-sm lg:text-base relative;
   }
 
-  /* Footer spacing */
+  .header-nav a::after {
+    @apply content-[''] absolute w-0 h-0.5 bg-charcoal left-0 -bottom-1 transition-all duration-300;
+  }
+
+  .header-nav a:hover::after {
+    @apply w-full;
+  }
+
+  /* Estilos do Rodapé */
   .footer-content {
     @apply grid grid-cols-1 md:grid-cols-4 gap-6 lg:gap-8 mb-8;
   }
 
-  /* Z-index management - FIXED */
+  /* Gestão de Z-index */
   .header-fixed {
     @apply z-[100];
   }
@@ -164,12 +198,12 @@
     @apply z-[110];
   }
 
-  /* Prevent text overlap */
-  .text-content {
-    @apply relative z-20;
+  /* Evitar sobreposição de texto */
+  .texto-centro {
+    @apply text-center relative z-20;
   }
 
-  /* Image overlay fixes */
+  /* Estilos dos containers de imagem */
   .image-container {
     @apply relative overflow-hidden;
   }
@@ -178,16 +212,42 @@
     @apply absolute inset-0 bg-black bg-opacity-0 transition-opacity duration-300 hover:bg-opacity-10;
   }
 
-  /* Payment method styles */
+  /* Estilos dos métodos de pagamento */
   .payment-method {
-    @apply border border-stone-grey p-4 cursor-pointer transition-all duration-300 hover:border-charcoal;
+    @apply border border-stone-grey p-4 cursor-pointer transition-all duration-300 hover:border-charcoal hover:shadow-md;
   }
 
   .payment-method.selected {
-    @apply border-charcoal bg-off-white;
+    @apply border-charcoal bg-off-white shadow-md;
   }
 
-  /* Responsive improvements */
+  /* Estilos específicos da Seção de Serviços */
+  .secao-servicos .card-servico {
+    @apply transition-all duration-300;
+  }
+
+  .secao-servicos .icone-container {
+    @apply transition-all duration-300;
+  }
+
+  /* Estilos específicos da Seção de Depoimentos */
+  .secao-depoimentos .card-depoimento {
+    @apply transition-all duration-300;
+  }
+
+  .secao-depoimentos .card-depoimento:hover {
+    @apply transform -translate-y-2;
+  }
+
+  .secao-depoimentos .citacao {
+    @apply relative;
+  }
+
+  .secao-depoimentos .autor-info {
+    @apply border-t border-stone-grey pt-4;
+  }
+
+  /* Melhorias responsivas */
   @media (max-width: 768px) {
     .container {
       @apply px-4;
@@ -223,9 +283,17 @@
     .btn-secondary {
       @apply px-4 py-2 text-sm;
     }
+
+    .grade-servicos {
+      @apply grid-cols-2 gap-4;
+    }
+
+    .grade-depoimentos {
+      @apply grid-cols-1 gap-6;
+    }
   }
 
-  /* Print styles for invoice */
+  /* Estilos para impressão da fatura */
   @media print {
     body {
       @apply bg-white;
@@ -235,4 +303,11 @@
       display: none !important;
     }
   }
+
+  /* Animações de entrada progressiva */
+  .animacao-fade-in:nth-child(1) { animation-delay: 0.1s; }
+  .animacao-fade-in:nth-child(2) { animation-delay: 0.2s; }
+  .animacao-fade-in:nth-child(3) { animation-delay: 0.3s; }
+  .animacao-fade-in:nth-child(4) { animation-delay: 0.4s; }
+  .animacao-fade-in:nth-child(5) { animation-delay: 0.5s; }
 }

@@ -56,9 +56,9 @@ const features = [
 
 const KeyFeatures = () => {
   return (
-    <section className="py-24 bg-pure-white">
+    <section className="secao-servicos py-24 bg-pure-white">
       <div className="container">
-        <div className="text-center mb-16">
+        <div className="texto-centro mb-16 animacao-fade-in">
           <h2 className="font-sora text-4xl md:text-5xl font-bold text-charcoal mb-6">
             Serviços & Comodidades
           </h2>
@@ -67,13 +67,14 @@ const KeyFeatures = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+        <div className="grade-servicos grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
           {features.map((feature, index) => (
             <div 
               key={index} 
-              className="text-center group hover:transform hover:scale-105 transition-all duration-300"
+              className="card-servico text-center group hover:transform hover:scale-105 transition-all duration-300 animacao-fade-in"
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className="bg-off-white p-6 mb-4 inline-flex items-center justify-center group-hover:bg-charcoal transition-colors duration-300">
+              <div className="icone-container bg-off-white border border-stone-grey p-6 mb-4 inline-flex items-center justify-center group-hover:bg-charcoal group-hover:shadow-lg transition-all duration-300">
                 <feature.icon className="w-8 h-8 text-charcoal group-hover:text-pure-white transition-colors duration-300" />
               </div>
               <h3 className="font-sora text-sm font-semibold text-charcoal mb-2 group-hover:text-stone-grey transition-colors duration-300">

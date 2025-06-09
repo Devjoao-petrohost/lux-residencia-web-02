@@ -42,52 +42,56 @@ const accommodations = [
 
 const FeaturedAccommodations = () => {
   return (
-    <section className="py-12 lg:py-24 bg-pure-white">
+    <section className="secao-acomodacoes py-12 lg:py-24 bg-pure-white">
       <div className="container px-4 lg:px-6">
-        <div className="text-center mb-8 lg:mb-16">
-          <h2 className="font-sora text-3xl md:text-4xl lg:text-5xl font-bold text-charcoal mb-4 lg:mb-6">
+        <div className="texto-centro mb-8 lg:mb-16 animacao-fade-in">
+          <h2 className="titulo-secao font-sora text-3xl md:text-4xl lg:text-5xl font-bold text-charcoal mb-4 lg:mb-6">
             Nossas Acomodações
           </h2>
-          <p className="font-sora text-base lg:text-lg text-stone-grey max-w-2xl mx-auto">
+          <p className="descricao-secao font-sora text-base lg:text-lg text-stone-grey max-w-2xl mx-auto">
             Cada suíte foi cuidadosamente projetada para oferecer uma experiência única de conforto e elegância.
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mb-8 lg:mb-16">
-          {accommodations.map((room) => (
-            <div key={room.id} className="accommodation-card group">
-              <div className="image-container">
+        <div className="grade-acomodacoes grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mb-8 lg:mb-16">
+          {accommodations.map((room, index) => (
+            <div 
+              key={room.id} 
+              className="card-acomodacao group animacao-fade-in"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <div className="container-imagem">
                 <img 
                   src={room.image}
                   alt={room.name}
-                  className="transition-transform duration-300 group-hover:scale-105 w-full h-48 lg:h-64 object-cover"
+                  className="imagem-quarto transition-transform duration-300 group-hover:scale-105 w-full h-48 lg:h-64 object-cover"
                 />
-                <div className="image-overlay"></div>
+                <div className="sobreposicao-imagem"></div>
               </div>
-              <div className="accommodation-card-content p-4 lg:p-6">
-                <h3 className="font-sora text-lg lg:text-xl font-bold text-charcoal mb-2 lg:mb-3">
+              <div className="conteudo-card p-4 lg:p-6">
+                <h3 className="nome-quarto font-sora text-lg lg:text-xl font-bold text-charcoal mb-2 lg:mb-3">
                   {room.name}
                 </h3>
                 
-                <div className="mb-3">
-                  <span className="text-sm font-sora font-semibold text-charcoal bg-off-white px-2 py-1">
+                <div className="info-capacidade mb-3">
+                  <span className="etiqueta-capacidade text-sm font-sora font-semibold text-charcoal bg-off-white px-2 py-1">
                     Capacidade: {room.capacity} pessoa{room.capacity > 1 ? 's' : ''}
                   </span>
                 </div>
                 
-                <p className="font-sora text-sm lg:text-base text-stone-grey mb-4">
+                <p className="descricao-quarto font-sora text-sm lg:text-base text-stone-grey mb-4">
                   {room.description}
                 </p>
                 
-                <div className="flex justify-between items-center mb-4 lg:mb-6">
-                  <span className="font-sora text-base lg:text-lg font-semibold text-charcoal">
+                <div className="info-preco flex justify-between items-center mb-4 lg:mb-6">
+                  <span className="preco-quarto font-sora text-base lg:text-lg font-semibold text-charcoal">
                     {room.price.toLocaleString('pt-AO')} Kz/noite
                   </span>
                 </div>
                 
                 <Link 
                   to={`/checkout?suite=${encodeURIComponent(room.name)}&id=${room.id}`}
-                  className="btn-primary w-full text-center text-sm lg:text-base"
+                  className="botao-reservar btn-primary w-full text-center text-sm lg:text-base"
                 >
                   Reservar Agora
                 </Link>
@@ -96,10 +100,10 @@ const FeaturedAccommodations = () => {
           ))}
         </div>
         
-        <div className="text-center">
+        <div className="texto-centro animacao-fade-in">
           <Link 
             to="/acomodacoes"
-            className="btn-secondary text-sm lg:text-base"
+            className="botao-ver-todas btn-secondary text-sm lg:text-base"
           >
             Ver Todas as Acomodações
           </Link>
