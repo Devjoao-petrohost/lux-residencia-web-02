@@ -1,10 +1,12 @@
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { toast } from '@/hooks/use-toast';
 
 const Admin = () => {
+  const navigate = useNavigate();
   const [credentials, setCredentials] = useState({
     username: '',
     password: ''
@@ -24,8 +26,23 @@ const Admin = () => {
     // Simulação de autenticação
     setTimeout(() => {
       console.log('Login attempt:', credentials);
+      
+      // Simple authentication - in real app, this would be against a real backend
+      if (credentials.username === 'admin' && credentials.password === 'maspe2024') {
+        toast({
+          title: "Login realizado com sucesso!",
+          description: "Bem-vindo ao painel administrativo.",
+        });
+        navigate('/admin/dashboard');
+      } else {
+        toast({
+          title: "Credenciais inválidas",
+          description: "Nome de usuário ou senha incorretos.",
+          variant: "destructive"
+        });
+      }
+      
       setIsLoading(false);
-      // Aqui seria implementada a lógica real de autenticação
     }, 1000);
   };
 
@@ -38,7 +55,7 @@ const Admin = () => {
           <div className="container max-w-md mx-auto">
             <div className="bg-pure-white p-12 shadow-lg">
               <div className="text-center mb-12">
-                <h1 className="font-playfair text-3xl font-bold text-charcoal mb-4">
+                <h1 className="font-sora text-3xl font-bold text-charcoal mb-4">
                   Área Administrativa
                 </h1>
                 <p className="font-sora text-stone-grey">
@@ -81,6 +98,16 @@ const Admin = () => {
                   {isLoading ? 'Verificando...' : 'Entrar'}
                 </button>
               </form>
+
+              <div className="mt-8 p-4 bg-off-white">
+                <p className="font-sora text-sm text-stone-grey text-center mb-2">
+                  <strong>Credenciais de teste:</strong>
+                </p>
+                <p className="font-sora text-xs text-charcoal text-center">
+                  Usuário: <strong>admin</strong><br />
+                  Senha: <strong>maspe2024</strong>
+                </p>
+              </div>
 
               <div className="text-center mt-8">
                 <Link 

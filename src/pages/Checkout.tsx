@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -14,34 +15,43 @@ const Checkout = () => {
     nomeCompleto: '',
     email: '',
     telefone: '',
+    bi: '',
     endereco: '',
     cidade: '',
-    cep: '',
     dataEntrada: '',
     dataSaida: '',
     numeroHospedes: '1',
     observacoes: ''
   });
 
-  const [paymentData, setPaymentData] = useState({
-    numeroCartao: '',
-    nomeCartao: '',
-    validadeCartao: '',
-    cvv: ''
-  });
-
+  const [paymentMethod, setPaymentMethod] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Preços simulados por quarto em Kwanza
-  const roomPrices: { [key: string]: number } = {
-    'Suíte Presidencial': 299000,
-    'Suíte Executive': 199000,
-    'Suíte Premium': 149000,
-    'Suíte Classic': 99000,
-    'Suíte Garden': 174000,
-    'Suíte Family': 224000
+  // Get room prices from localStorage or default
+  const getRoomPrices = () => {
+    const rooms = JSON.parse(localStorage.getItem('maspe_rooms') || '[]');
+    const roomPrices: { [key: string]: number } = {};
+    
+    rooms.forEach((room: any) => {
+      roomPrices[room.name] = room.price;
+    });
+    
+    // Default prices if no rooms in localStorage
+    if (rooms.length === 0) {
+      return {
+        'Suíte Presidencial': 299000,
+        'Suíte Executive': 199000,
+        'Suíte Premium': 149000,
+        'Suíte Classic': 99000,
+        'Suíte Garden': 174000,
+        'Suíte Family': 224000
+      };
+    }
+    
+    return roomPrices;
   };
 
+  const roomPrices = getRoomPrices();
   const pricePerNight = roomPrices[selectedSuite] || 149000;
 
   const calculateNights = () => {
@@ -59,12 +69,7 @@ const Checkout = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    if (name.startsWith('payment_')) {
-      const paymentField = name.replace('payment_', '');
-      setPaymentData(prev => ({ ...prev, [paymentField]: value }));
-    } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
-    }
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const processPayment = async () => {
@@ -75,20 +80,23 @@ const Checkout = () => {
     
     // Gerar ID de transação simulado
     const transactionId = 'TXN_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    const referenceNumber = 'REF_' + Math.random().toString(36).substr(2, 9).toUpperCase();
     
     // Salvar reserva no localStorage (simulando base de dados)
     const booking = {
       id: Date.now().toString(),
       transactionId,
+      referenceNumber,
       guest: { ...formData },
       suite: selectedSuite,
       suiteId,
       pricePerNight,
       nights: calculateNights(),
       totalAmount,
-      paymentStatus: 'paid',
+      paymentMethod,
+      paymentStatus: 'pending',
       bookingDate: new Date().toISOString(),
-      status: 'confirmed'
+      status: 'pending_payment'
     };
 
     const existingBookings = JSON.parse(localStorage.getItem('maspe_bookings') || '[]');
@@ -98,14 +106,14 @@ const Checkout = () => {
     setIsProcessing(false);
     
     // Redirecionar para página de confirmação
-    navigate(`/confirmacao?transaction=${transactionId}`);
+    navigate(`/confirmacao?transaction=${transactionId}&method=${paymentMethod}&reference=${referenceNumber}`);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validação básica
-    if (!formData.nomeCompleto || !formData.email || !formData.telefone || !formData.dataEntrada || !formData.dataSaida) {
+    if (!formData.nomeCompleto || !formData.email || !formData.telefone || !formData.bi || !formData.dataEntrada || !formData.dataSaida) {
       toast({
         title: "Campos obrigatórios",
         description: "Por favor, preencha todos os campos obrigatórios.",
@@ -114,10 +122,10 @@ const Checkout = () => {
       return;
     }
 
-    if (!paymentData.numeroCartao || !paymentData.nomeCartao || !paymentData.validadeCartao || !paymentData.cvv) {
+    if (!paymentMethod) {
       toast({
-        title: "Dados de pagamento incompletos",
-        description: "Por favor, preencha todos os dados do cartão.",
+        title: "Método de pagamento",
+        description: "Por favor, selecione um método de pagamento.",
         variant: "destructive"
       });
       return;
@@ -134,7 +142,7 @@ const Checkout = () => {
         <section className="py-16 bg-off-white">
           <div className="container max-w-6xl">
             <div className="text-center mb-12">
-              <h1 className="font-playfair text-4xl md:text-5xl font-bold text-charcoal mb-6">
+              <h1 className="font-sora text-4xl md:text-5xl font-bold text-charcoal mb-6">
                 Checkout - Finalizar Reserva
               </h1>
               {selectedSuite && (
@@ -194,6 +202,19 @@ const Checkout = () => {
                       <div className="floating-label">
                         <input
                           type="text"
+                          id="bi"
+                          name="bi"
+                          value={formData.bi}
+                          onChange={handleInputChange}
+                          placeholder=" "
+                          required
+                        />
+                        <label htmlFor="bi">Nº do BI *</label>
+                      </div>
+
+                      <div className="floating-label md:col-span-2">
+                        <input
+                          type="text"
                           id="endereco"
                           name="endereco"
                           value={formData.endereco}
@@ -213,18 +234,6 @@ const Checkout = () => {
                           placeholder=" "
                         />
                         <label htmlFor="cidade">Cidade</label>
-                      </div>
-
-                      <div className="floating-label">
-                        <input
-                          type="text"
-                          id="cep"
-                          name="cep"
-                          value={formData.cep}
-                          onChange={handleInputChange}
-                          placeholder=" "
-                        />
-                        <label htmlFor="cep">CEP</label>
                       </div>
                     </div>
                   </div>
@@ -276,62 +285,49 @@ const Checkout = () => {
                   </div>
 
                   <div className="form-section">
-                    <h2>Dados de Pagamento</h2>
+                    <h2>Método de Pagamento</h2>
                     
-                    <div className="grid md:grid-cols-2 gap-8">
-                      <div className="md:col-span-2 floating-label">
-                        <input
-                          type="text"
-                          id="numeroCartao"
-                          name="payment_numeroCartao"
-                          value={paymentData.numeroCartao}
-                          onChange={handleInputChange}
-                          placeholder="1234 5678 9012 3456"
-                          maxLength={19}
-                          required
-                        />
-                        <label htmlFor="numeroCartao">Número do Cartão *</label>
+                    <div className="space-y-4">
+                      <div 
+                        className={`payment-method ${paymentMethod === 'transferencia' ? 'selected' : ''}`}
+                        onClick={() => setPaymentMethod('transferencia')}
+                      >
+                        <div className="flex items-center">
+                          <input
+                            type="radio"
+                            id="transferencia"
+                            name="paymentMethod"
+                            value="transferencia"
+                            checked={paymentMethod === 'transferencia'}
+                            onChange={(e) => setPaymentMethod(e.target.value)}
+                            className="mr-3"
+                          />
+                          <div>
+                            <h4 className="font-sora font-semibold text-charcoal">Transferência Bancária</h4>
+                            <p className="font-sora text-sm text-stone-grey">Transfira diretamente para nossa conta bancária</p>
+                          </div>
+                        </div>
                       </div>
 
-                      <div className="floating-label">
-                        <input
-                          type="text"
-                          id="nomeCartao"
-                          name="payment_nomeCartao"
-                          value={paymentData.nomeCartao}
-                          onChange={handleInputChange}
-                          placeholder=" "
-                          required
-                        />
-                        <label htmlFor="nomeCartao">Nome no Cartão *</label>
-                      </div>
-
-                      <div className="floating-label">
-                        <input
-                          type="text"
-                          id="validadeCartao"
-                          name="payment_validadeCartao"
-                          value={paymentData.validadeCartao}
-                          onChange={handleInputChange}
-                          placeholder="MM/AA"
-                          maxLength={5}
-                          required
-                        />
-                        <label htmlFor="validadeCartao">Validade *</label>
-                      </div>
-
-                      <div className="floating-label">
-                        <input
-                          type="text"
-                          id="cvv"
-                          name="payment_cvv"
-                          value={paymentData.cvv}
-                          onChange={handleInputChange}
-                          placeholder="123"
-                          maxLength={4}
-                          required
-                        />
-                        <label htmlFor="cvv">CVV *</label>
+                      <div 
+                        className={`payment-method ${paymentMethod === 'multicaixa' ? 'selected' : ''}`}
+                        onClick={() => setPaymentMethod('multicaixa')}
+                      >
+                        <div className="flex items-center">
+                          <input
+                            type="radio"
+                            id="multicaixa"
+                            name="paymentMethod"
+                            value="multicaixa"
+                            checked={paymentMethod === 'multicaixa'}
+                            onChange={(e) => setPaymentMethod(e.target.value)}
+                            className="mr-3"
+                          />
+                          <div>
+                            <h4 className="font-sora font-semibold text-charcoal">Pagamento por Referência (Multicaixa Express)</h4>
+                            <p className="font-sora text-sm text-stone-grey">Pague usando uma referência no Multicaixa Express</p>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -353,14 +349,14 @@ const Checkout = () => {
                     disabled={isProcessing}
                     className="btn-primary w-full py-4 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isProcessing ? 'Processando Pagamento...' : `Pagar ${totalAmount.toLocaleString('pt-AO')} Kz`}
+                    {isProcessing ? 'Processando Reserva...' : `Confirmar Reserva - ${totalAmount.toLocaleString('pt-AO')} Kz`}
                   </button>
                 </form>
               </div>
 
               {/* Resumo da Reserva */}
               <div className="bg-pure-white p-8 h-fit shadow-lg">
-                <h3 className="font-playfair text-2xl font-bold text-charcoal mb-6">
+                <h3 className="font-sora text-2xl font-bold text-charcoal mb-6">
                   Resumo da Reserva
                 </h3>
                 

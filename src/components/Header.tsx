@@ -17,12 +17,12 @@ const Header = () => {
   }, []);
 
   const headerClass = isHomePage 
-    ? `fixed top-0 left-0 right-0 header-fixed transition-all duration-300 z-50 ${
+    ? `fixed top-0 left-0 right-0 header-fixed transition-all duration-300 z-[100] ${
         isScrolled 
           ? 'bg-off-white shadow-lg' 
           : 'bg-transparent'
       }`
-    : 'bg-off-white shadow-lg';
+    : 'bg-off-white shadow-lg z-[100]';
 
   return (
     <header className={headerClass}>
@@ -36,18 +36,18 @@ const Header = () => {
             <Link to="/">
               Início
             </Link>
-            <a href="#sobre">
+            <Link to="/sobre">
               Sobre
-            </a>
+            </Link>
             <Link to="/acomodacoes">
               Acomodações
             </Link>
-            <a href="#servicos">
+            <Link to="/servicos">
               Serviços
-            </a>
-            <a href="#contato">
+            </Link>
+            <Link to="/contato">
               Contato
-            </a>
+            </Link>
             <Link 
               to="/admin" 
               className="bg-charcoal text-pure-white px-4 py-2 font-sora font-medium hover:bg-opacity-90 transition-colors duration-300"

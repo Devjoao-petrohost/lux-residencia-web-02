@@ -136,7 +136,7 @@
     @apply grid md:grid-cols-2 lg:grid-cols-3 gap-8;
   }
 
-  /* Header fixes */
+  /* Header fixes - CRITICAL Z-INDEX FIX */
   .header-nav {
     @apply flex items-center space-x-8;
   }
@@ -150,9 +150,9 @@
     @apply grid md:grid-cols-4 gap-8 mb-8;
   }
 
-  /* Z-index management */
+  /* Z-index management - FIXED */
   .header-fixed {
-    @apply z-50;
+    @apply z-[100];
   }
 
   .hero-section {
@@ -160,7 +160,7 @@
   }
 
   .modal-overlay {
-    @apply z-60;
+    @apply z-[110];
   }
 
   /* Prevent text overlap */
@@ -175,5 +175,14 @@
 
   .image-overlay {
     @apply absolute inset-0 bg-black bg-opacity-0 transition-opacity duration-300 hover:bg-opacity-10;
+  }
+
+  /* Payment method styles */
+  .payment-method {
+    @apply border border-stone-grey p-4 cursor-pointer transition-all duration-300 hover:border-charcoal;
+  }
+
+  .payment-method.selected {
+    @apply border-charcoal bg-off-white;
   }
 }
