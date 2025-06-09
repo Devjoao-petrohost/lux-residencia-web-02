@@ -20,7 +20,7 @@ const Checkout = () => {
     cidade: '',
     dataEntrada: '',
     dataSaida: '',
-    numeroHospedes: '1',
+    numeroPessoas: '1',
     observacoes: ''
   });
 
@@ -138,28 +138,28 @@ const Checkout = () => {
     <div className="min-h-screen">
       <Header />
       
-      <main className="pt-32">
-        <section className="py-16 bg-off-white">
-          <div className="container max-w-6xl">
-            <div className="text-center mb-12">
-              <h1 className="font-sora text-4xl md:text-5xl font-bold text-charcoal mb-6">
+      <main className="pt-24 lg:pt-32">
+        <section className="py-8 lg:py-16 bg-off-white">
+          <div className="container max-w-6xl px-4 lg:px-6">
+            <div className="text-center mb-8 lg:mb-12">
+              <h1 className="font-sora text-3xl md:text-4xl lg:text-5xl font-bold text-charcoal mb-4 lg:mb-6">
                 Checkout - Finalizar Reserva
               </h1>
               {selectedSuite && (
-                <p className="font-sora text-xl text-stone-grey">
+                <p className="font-sora text-lg lg:text-xl text-stone-grey">
                   Você selecionou: <strong className="text-charcoal">{selectedSuite}</strong>
                 </p>
               )}
             </div>
             
-            <div className="grid lg:grid-cols-3 gap-12">
+            <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
               {/* Formulário Principal */}
-              <div className="lg:col-span-2 bg-pure-white p-8 shadow-lg">
+              <div className="lg:col-span-2 bg-pure-white p-6 lg:p-8 shadow-lg">
                 <form onSubmit={handleSubmit} className="checkout-form">
                   <div className="form-section">
                     <h2>Dados do Hóspede</h2>
                     
-                    <div className="grid md:grid-cols-2 gap-8">
+                    <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
                       <div className="floating-label">
                         <input
                           type="text"
@@ -241,7 +241,7 @@ const Checkout = () => {
                   <div className="form-section">
                     <h2>Detalhes da Reserva</h2>
                     
-                    <div className="grid md:grid-cols-3 gap-8">
+                    <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
                       <div className="floating-label">
                         <input
                           type="date"
@@ -268,18 +268,20 @@ const Checkout = () => {
 
                       <div className="floating-label">
                         <select
-                          id="numeroHospedes"
-                          name="numeroHospedes"
-                          value={formData.numeroHospedes}
+                          id="numeroPessoas"
+                          name="numeroPessoas"
+                          value={formData.numeroPessoas}
                           onChange={handleInputChange}
+                          required
                         >
-                          <option value="1">1 Hóspede</option>
-                          <option value="2">2 Hóspedes</option>
-                          <option value="3">3 Hóspedes</option>
-                          <option value="4">4 Hóspedes</option>
-                          <option value="5">5+ Hóspedes</option>
+                          <option value="1">1 Pessoa</option>
+                          <option value="2">2 Pessoas</option>
+                          <option value="3">3 Pessoas</option>
+                          <option value="4">4 Pessoas</option>
+                          <option value="5">5 Pessoas</option>
+                          <option value="6">6+ Pessoas</option>
                         </select>
-                        <label htmlFor="numeroHospedes">Número de Hóspedes</label>
+                        <label htmlFor="numeroPessoas">Número de Pessoas *</label>
                       </div>
                     </div>
                   </div>
@@ -347,7 +349,7 @@ const Checkout = () => {
                   <button
                     type="submit"
                     disabled={isProcessing}
-                    className="btn-primary w-full py-4 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="btn-primary w-full py-3 lg:py-4 text-base lg:text-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isProcessing ? 'Processando Reserva...' : `Confirmar Reserva - ${totalAmount.toLocaleString('pt-AO')} Kz`}
                   </button>
@@ -355,8 +357,8 @@ const Checkout = () => {
               </div>
 
               {/* Resumo da Reserva */}
-              <div className="bg-pure-white p-8 h-fit shadow-lg">
-                <h3 className="font-sora text-2xl font-bold text-charcoal mb-6">
+              <div className="bg-pure-white p-6 lg:p-8 h-fit shadow-lg">
+                <h3 className="font-sora text-xl lg:text-2xl font-bold text-charcoal mb-4 lg:mb-6">
                   Resumo da Reserva
                 </h3>
                 
@@ -377,11 +379,11 @@ const Checkout = () => {
                   </div>
                   
                   <div className="flex justify-between border-b border-stone-grey pb-2">
-                    <span className="text-stone-grey">Hóspedes:</span>
-                    <span className="text-charcoal">{formData.numeroHospedes}</span>
+                    <span className="text-stone-grey">Pessoas:</span>
+                    <span className="text-charcoal">{formData.numeroPessoas}</span>
                   </div>
                   
-                  <div className="flex justify-between font-bold text-xl pt-4">
+                  <div className="flex justify-between font-bold text-lg lg:text-xl pt-4">
                     <span className="text-charcoal">Total:</span>
                     <span className="text-charcoal">{totalAmount.toLocaleString('pt-AO')} Kz</span>
                   </div>

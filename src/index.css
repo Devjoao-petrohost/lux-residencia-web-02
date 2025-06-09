@@ -57,6 +57,7 @@
     @apply bg-off-white text-charcoal font-sora;
     font-feature-settings: "rlig" 1, "calt" 1;
     line-height: 1.6;
+    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -75,7 +76,7 @@
   }
 
   .floating-label label {
-    @apply absolute left-0 top-4 text-stone-grey transition-all duration-300 pointer-events-none;
+    @apply absolute left-0 top-4 text-stone-grey transition-all duration-300 pointer-events-none text-sm lg:text-base;
   }
 
   .floating-label input:focus ~ label,
@@ -93,7 +94,7 @@
   }
 
   .container {
-    @apply mx-auto px-6 max-w-7xl;
+    @apply mx-auto px-4 lg:px-6 max-w-7xl;
   }
 
   /* Card spacing fixes */
@@ -102,52 +103,52 @@
   }
 
   .accommodation-card img {
-    @apply w-full h-64 object-cover;
+    @apply w-full h-48 lg:h-64 object-cover;
   }
 
   .accommodation-card-content {
-    @apply p-6;
+    @apply p-4 lg:p-6;
   }
 
   /* Button fixes */
   .btn-primary {
-    @apply bg-charcoal text-pure-white px-6 py-3 font-sora font-semibold transition-all duration-300 hover:bg-opacity-90 inline-block text-center;
+    @apply bg-charcoal text-pure-white px-4 lg:px-6 py-2 lg:py-3 font-sora font-semibold transition-all duration-300 hover:bg-opacity-90 inline-block text-center text-sm lg:text-base;
   }
 
   .btn-secondary {
-    @apply border-2 border-charcoal text-charcoal px-6 py-3 font-sora font-semibold transition-all duration-300 hover:bg-charcoal hover:text-pure-white inline-block text-center;
+    @apply border-2 border-charcoal text-charcoal px-4 lg:px-6 py-2 lg:py-3 font-sora font-semibold transition-all duration-300 hover:bg-charcoal hover:text-pure-white inline-block text-center text-sm lg:text-base;
   }
 
   /* Form improvements */
   .checkout-form {
-    @apply space-y-8;
+    @apply space-y-6 lg:space-y-8;
   }
 
   .form-section {
-    @apply mb-12;
+    @apply mb-8 lg:mb-12;
   }
 
   .form-section h2 {
-    @apply font-sora text-2xl font-bold text-charcoal mb-8 border-b border-stone-grey pb-4;
+    @apply font-sora text-xl lg:text-2xl font-bold text-charcoal mb-6 lg:mb-8 border-b border-stone-grey pb-4;
   }
 
   /* Grid fixes */
   .grid-accommodations {
-    @apply grid md:grid-cols-2 lg:grid-cols-3 gap-8;
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8;
   }
 
   /* Header fixes - CRITICAL Z-INDEX FIX */
   .header-nav {
-    @apply flex items-center space-x-8;
+    @apply flex items-center space-x-6 lg:space-x-8;
   }
 
   .header-nav a {
-    @apply text-charcoal hover:text-stone-grey transition-colors duration-300 font-sora font-medium;
+    @apply text-charcoal hover:text-stone-grey transition-colors duration-300 font-sora font-medium text-sm lg:text-base;
   }
 
   /* Footer spacing */
   .footer-content {
-    @apply grid md:grid-cols-4 gap-8 mb-8;
+    @apply grid grid-cols-1 md:grid-cols-4 gap-6 lg:gap-8 mb-8;
   }
 
   /* Z-index management - FIXED */
@@ -184,5 +185,54 @@
 
   .payment-method.selected {
     @apply border-charcoal bg-off-white;
+  }
+
+  /* Responsive improvements */
+  @media (max-width: 768px) {
+    .container {
+      @apply px-4;
+    }
+    
+    .hero-section {
+      @apply mt-16;
+    }
+    
+    .accommodation-card {
+      @apply mx-2;
+    }
+    
+    .checkout-form {
+      @apply space-y-6;
+    }
+    
+    .form-section {
+      @apply mb-8;
+    }
+    
+    .floating-label input,
+    .floating-label select,
+    .floating-label textarea {
+      @apply py-3 text-sm;
+    }
+    
+    .floating-label label {
+      @apply text-sm top-3;
+    }
+    
+    .btn-primary,
+    .btn-secondary {
+      @apply px-4 py-2 text-sm;
+    }
+  }
+
+  /* Print styles for invoice */
+  @media print {
+    body {
+      @apply bg-white;
+    }
+    
+    .no-print {
+      display: none !important;
+    }
   }
 }
