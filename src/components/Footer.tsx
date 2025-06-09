@@ -1,4 +1,3 @@
-
 const Footer = () => {
   return (
     <footer className="bg-charcoal text-pure-white">
@@ -24,17 +23,17 @@ const Footer = () => {
           <div>
             <h4 className="font-inter font-semibold mb-4">Contato</h4>
             <div className="space-y-2 text-stone-grey text-sm">
-              <p>Rua das Flores, 123</p>
-              <p>Centro, São Paulo - SP</p>
-              <p>CEP: 01234-567</p>
-              <p>Tel: (11) 1234-5678</p>
-              <p>contato@masperesidencial.com</p>
+              <p>Luanda</p>
+              <p>Luanda, Angola</p>
+              <p>+244 972463599</p>
+              <p>Tel: (+244) 972463599</p>
+              <p>contato@masperesidencial.ao</p>
             </div>
           </div>
           
           <div>
             <h4 className="font-inter font-semibold mb-4">Redes Sociais</h4>
-            <div className="flex space-x-4">
+            <div className="flex flex-col space-y-2">
               <a href="#" className="text-stone-grey hover:text-pure-white transition-colors duration-300">
                 Instagram
               </a>
@@ -45,10 +44,19 @@ const Footer = () => {
           </div>
         </div>
         
-        <div className="border-t border-stone-grey mt-8 pt-8 text-center">
-          <p className="text-stone-grey text-sm">
-            © 2024 Maspe Residencial. Todos os direitos reservados.
+        <div className="border-t border-stone-grey mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-stone-grey text-sm text-left w-full md:w-auto md:text-left">
+            © 2025 Maspe Residencial. Todos os direitos reservados.
           </p>
+          <a
+            href="https://petrohost.ao"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-stone-grey text-sm mt-2 md:mt-0 md:text-right hover:text-pure-white transition-colors duration-300"
+            style={{ textDecoration: 'none' }}
+          >
+            Site desenvolvido pela Petrohost
+          </a>
         </div>
       </div>
     </footer>

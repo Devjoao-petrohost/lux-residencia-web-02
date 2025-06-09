@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -15,179 +14,163 @@ const getAccommodations = () => {
   return [
     {
       id: 1,
-      name: 'Suíte Presidencial Deluxe',
-      image: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      description: 'Nossa suíte mais luxuosa com vista panorâmica da cidade e serviço de mordomo 24h. Inclui café da manhã, Wi-Fi gratuito, serviço de quarto, acesso ao restaurante e bar.',
-      status: 'Disponível',
+      name: 'Suíte Simples',
+      image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80',
+      description: 'Nossa suíte oferece conforto, elegância e uma experiência completa com café da manhã incluso, Wi-Fi gratuito, serviço de quarto, salão de eventos, cafetaria, restaurante, discoteca, geladaria, bar e serviços de encomenda.',
       capacity: 4,
-      features: ['Vista panorâmica', 'Banheira de hidromassagem', 'Serviço de mordomo', 'Bar privado'],
-      price: 299000,
-      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Restaurante', 'Bar']
+      features: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Bar'],
+      price: 79000,
+      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Salão de eventos', 'Cafetaria', 'Restaurante', 'Discoteca', 'Geladaria', 'Bar', 'Serviços de encomenda']
     },
     {
       id: 2,
-      name: 'Suíte Executive Master',
+      name: 'Suíte Standard',
       image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80',
-      description: 'Ideal para executivos, com escritório integrado e alta velocidade de internet. Inclui café da manhã, Wi-Fi premium, serviço de quarto e acesso ao salão de eventos.',
-      status: 'Ocupado',
-      capacity: 2,
-      features: ['Escritório integrado', 'Wi-Fi premium', 'Business center', 'Impressora'],
-      price: 199000,
-      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Salão de eventos']
+      description: 'Nossa suíte oferece conforto, elegância e uma experiência completa com café da manhã incluso, Wi-Fi gratuito, serviço de quarto, salão de eventos, cafetaria, restaurante, discoteca, geladaria, bar e serviços de encomenda.',
+      capacity: 4,
+      features: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Bar'],
+      price: 89000,
+      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Salão de eventos', 'Cafetaria', 'Restaurante', 'Discoteca', 'Geladaria', 'Bar', 'Serviços de encomenda']
     },
     {
       id: 3,
-      name: 'Suíte Premium Ocean',
-      image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=M3wxMJA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2126&q=80',
-      description: 'Combinação perfeita de conforto e elegância, com varanda privativa. Inclui café da manhã, Wi-Fi gratuito, serviço de quarto e acesso à cafetaria.',
-      status: 'Disponível',
-      capacity: 3,
-      features: ['Varanda privativa', 'Amenidades premium', 'Room service 24h', 'Vista oceânica'],
-      price: 149000,
-      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Cafetaria']
+      name: 'Suíte Conforto',
+      image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&ixid=M3wxMJA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80',
+      description: 'Nossa suíte oferece conforto, elegância e uma experiência completa com café da manhã incluso, Wi-Fi gratuito, serviço de quarto, salão de eventos, cafetaria, restaurante, discoteca, geladaria, bar e serviços de encomenda.',
+      capacity: 4,
+      features: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Bar'],
+      price: 99000,
+      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Salão de eventos', 'Cafetaria', 'Restaurante', 'Discoteca', 'Geladaria', 'Bar', 'Serviços de encomenda']
     },
     {
       id: 4,
-      name: 'Suíte Classic Comfort',
-      image: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      description: 'Nosso quarto mais aconchegante, perfeito para estadias de lazer. Inclui café da manhã, Wi-Fi gratuito, serviço de quarto e acesso ao bar.',
-      status: 'Disponível',
-      capacity: 2,
-      features: ['Design aconchegante', 'Minibar premium', 'Concierge personalizado', 'Sala de estar'],
-      price: 99000,
-      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Bar']
+      name: 'Suíte Luxo',
+      image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80',
+      description: 'Nossa suíte oferece conforto, elegância e uma experiência completa com café da manhã incluso, Wi-Fi gratuito, serviço de quarto, salão de eventos, cafetaria, restaurante, discoteca, geladaria, bar e serviços de encomenda.',
+      capacity: 4,
+      features: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Bar'],
+      price: 129000,
+      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Salão de eventos', 'Cafetaria', 'Restaurante', 'Discoteca', 'Geladaria', 'Bar', 'Serviços de encomenda']
     },
     {
       id: 5,
-      name: 'Suíte Garden Paradise',
-      image: 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      description: 'Suíte única com acesso direto ao jardim privativo, perfeita para relaxamento. Inclui café da manhã, Wi-Fi gratuito, serviço de quarto e acesso à geladaria.',
-      status: 'Disponível',
-      capacity: 2,
-      features: ['Jardim privativo', 'Terraço', 'Banheira externa', 'Spa privado'],
-      price: 174000,
-      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Geladaria']
+      name: 'Suíte Premium',
+      image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80',
+      description: 'Nossa suíte oferece conforto, elegância e uma experiência completa com café da manhã incluso, Wi-Fi gratuito, serviço de quarto, salão de eventos, cafetaria, restaurante, discoteca, geladaria, bar e serviços de encomenda.',
+      capacity: 4,
+      features: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Bar'],
+      price: 149000,
+      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Salão de eventos', 'Cafetaria', 'Restaurante', 'Discoteca', 'Geladaria', 'Bar', 'Serviços de encomenda']
     },
     {
       id: 6,
-      name: 'Suíte Family Supreme',
-      image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      description: 'Ampla suíte familiar com dois quartos conectados, ideal para famílias. Inclui café da manhã, Wi-Fi gratuito, serviço de quarto e acesso à discoteca.',
-      status: 'Ocupado',
-      capacity: 6,
-      features: ['Dois quartos', 'Sala de estar', 'Cozinha compacta', 'Área de jogos'],
-      price: 224000,
-      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Discoteca']
+      name: 'Suíte Master',
+      image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80',
+      description: 'Nossa suíte oferece conforto, elegância e uma experiência completa com café da manhã incluso, Wi-Fi gratuito, serviço de quarto, salão de eventos, cafetaria, restaurante, discoteca, geladaria, bar e serviços de encomenda.',
+      capacity: 4,
+      features: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Bar'],
+      price: 179000,
+      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Salão de eventos', 'Cafetaria', 'Restaurante', 'Discoteca', 'Geladaria', 'Bar', 'Serviços de encomenda']
     },
     {
       id: 7,
-      name: 'Suíte Business Elite',
-      image: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      description: 'Projetada para o viajante de negócios moderno, com todas as facilidades necessárias. Inclui café da manhã, Wi-Fi premium, serviço de quarto e salão de eventos.',
-      status: 'Disponível',
-      capacity: 2,
-      features: ['Mesa executiva', 'Internet dedicada', 'Impressora', 'Sala de reuniões'],
-      price: 189000,
-      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Salão de eventos']
+      name: 'Suíte Familiar',
+      image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80',
+      description: 'Nossa suíte oferece conforto, elegância e uma experiência completa com café da manhã incluso, Wi-Fi gratuito, serviço de quarto, salão de eventos, cafetaria, restaurante, discoteca, geladaria, bar e serviços de encomenda.',
+      capacity: 4,
+      features: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Bar'],
+      price: 199000,
+      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Salão de eventos', 'Cafetaria', 'Restaurante', 'Discoteca', 'Geladaria', 'Bar', 'Serviços de encomenda']
     },
     {
       id: 8,
-      name: 'Suíte Romantic Sunset',
-      image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=M3wxMJA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2126&q=80',
-      description: 'Ambiente perfeito para casais, com decoração romântica e vista privilegiada. Inclui café da manhã, Wi-Fi gratuito, serviço de quarto e acesso ao restaurante.',
-      status: 'Disponível',
-      capacity: 2,
-      features: ['Vista oeste', 'Decoração romântica', 'Banheira dupla', 'Terraço privado'],
-      price: 159000,
-      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Restaurante']
+      name: 'Suíte Executiva',
+      image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80',
+      description: 'Nossa suíte oferece conforto, elegância e uma experiência completa com café da manhã incluso, Wi-Fi gratuito, serviço de quarto, salão de eventos, cafetaria, restaurante, discoteca, geladaria, bar e serviços de encomenda.',
+      capacity: 4,
+      features: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Bar'],
+      price: 189000,
+      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Salão de eventos', 'Cafetaria', 'Restaurante', 'Discoteca', 'Geladaria', 'Bar', 'Serviços de encomenda']
     },
     {
       id: 9,
-      name: 'Suíte Urban Style',
+      name: 'Suíte Romântica',
       image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80',
-      description: 'Design moderno e urbano, ideal para hóspedes que apreciam estilo contemporâneo. Inclui café da manhã, Wi-Fi gratuito, serviço de quarto e cafetaria.',
-      status: 'Disponível',
-      capacity: 3,
-      features: ['Design contemporâneo', 'Smart TV', 'Sistema de som', 'Iluminação inteligente'],
-      price: 129000,
-      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Cafetaria']
+      description: 'Nossa suíte oferece conforto, elegância e uma experiência completa com café da manhã incluso, Wi-Fi gratuito, serviço de quarto, salão de eventos, cafetaria, restaurante, discoteca, geladaria, bar e serviços de encomenda.',
+      capacity: 4,
+      features: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Bar'],
+      price: 159000,
+      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Salão de eventos', 'Cafetaria', 'Restaurante', 'Discoteca', 'Geladaria', 'Bar', 'Serviços de encomenda']
     },
     {
       id: 10,
-      name: 'Suíte Comfort Plus',
-      image: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      description: 'Conforto elevado com todas as comodidades essenciais para uma estadia perfeita. Inclui café da manhã, Wi-Fi gratuito, serviço de quarto e bar.',
-      status: 'Ocupado',
-      capacity: 2,
-      features: ['Cama king size', 'Frigobar', 'Cofre digital', 'Varanda pequena'],
-      price: 109000,
-      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Bar']
+      name: 'Suíte Terraço',
+      image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80',
+      description: 'Nossa suíte oferece conforto, elegância e uma experiência completa com café da manhã incluso, Wi-Fi gratuito, serviço de quarto, salão de eventos, cafetaria, restaurante, discoteca, geladaria, bar e serviços de encomenda.',
+      capacity: 4,
+      features: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Bar'],
+      price: 174000,
+      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Salão de eventos', 'Cafetaria', 'Restaurante', 'Discoteca', 'Geladaria', 'Bar', 'Serviços de encomenda']
     },
     {
       id: 11,
-      name: 'Suíte Wellness Spa',
-      image: 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      description: 'Focada no bem-estar, com spa privado e amenidades de relaxamento. Inclui café da manhã, Wi-Fi gratuito, serviço de quarto e serviços de encomenda.',
-      status: 'Disponível',
-      capacity: 2,
-      features: ['Spa privado', 'Sauna', 'Produtos orgânicos', 'Área de meditação'],
+      name: 'Suíte Spa',
+      image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80',
+      description: 'Nossa suíte oferece conforto, elegância e uma experiência completa com café da manhã incluso, Wi-Fi gratuito, serviço de quarto, salão de eventos, cafetaria, restaurante, discoteca, geladaria, bar e serviços de encomenda.',
+      capacity: 4,
+      features: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Bar'],
       price: 209000,
-      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Serviços de encomenda']
+      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Salão de eventos', 'Cafetaria', 'Restaurante', 'Discoteca', 'Geladaria', 'Bar', 'Serviços de encomenda']
     },
     {
       id: 12,
-      name: 'Suíte Cultural Heritage',
-      image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      description: 'Decoração inspirada na cultura angolana, celebrando a rica herança local. Inclui café da manhã, Wi-Fi gratuito, serviço de quarto e restaurante.',
-      status: 'Disponível',
-      capacity: 3,
-      features: ['Arte local', 'Mobiliário artesanal', 'Biblioteca', 'Galeria privada'],
+      name: 'Suíte Cultural',
+      image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80',
+      description: 'Nossa suíte oferece conforto, elegância e uma experiência completa com café da manhã incluso, Wi-Fi gratuito, serviço de quarto, salão de eventos, cafetaria, restaurante, discoteca, geladaria, bar e serviços de encomenda.',
+      capacity: 4,
+      features: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Bar'],
       price: 169000,
-      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Restaurante']
+      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Salão de eventos', 'Cafetaria', 'Restaurante', 'Discoteca', 'Geladaria', 'Bar', 'Serviços de encomenda']
     },
     {
       id: 13,
-      name: 'Suíte Technology Hub',
-      image: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      description: 'Equipada com a mais moderna tecnologia para o hóspede conectado. Inclui café da manhã, Wi-Fi premium, serviço de quarto e serviços de encomenda.',
-      status: 'Disponível',
-      capacity: 2,
-      features: ['Casa inteligente', 'Múltiplas telas', 'Carregamento wireless', 'Gaming setup'],
+      name: 'Suíte Moderna',
+      image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80',
+      description: 'Nossa suíte oferece conforto, elegância e uma experiência completa com café da manhã incluso, Wi-Fi gratuito, serviço de quarto, salão de eventos, cafetaria, restaurante, discoteca, geladaria, bar e serviços de encomenda.',
+      capacity: 4,
+      features: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Bar'],
       price: 179000,
-      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Serviços de encomenda']
+      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Salão de eventos', 'Cafetaria', 'Restaurante', 'Discoteca', 'Geladaria', 'Bar', 'Serviços de encomenda']
     },
     {
       id: 14,
-      name: 'Suíte Artistic Loft',
-      image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=M3wxMJA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2126&q=80',
-      description: 'Ambiente criativo com pé-direito alto e decoração artística única. Inclui café da manhã, Wi-Fi gratuito, serviço de quarto e cafetaria.',
-      status: 'Disponível',
+      name: 'Suíte Artística',
+      image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80',
+      description: 'Nossa suíte oferece conforto, elegância e uma experiência completa com café da manhã incluso, Wi-Fi gratuito, serviço de quarto, salão de eventos, cafetaria, restaurante, discoteca, geladaria, bar e serviços de encomenda.',
       capacity: 4,
-      features: ['Pé-direito alto', 'Obras de arte', 'Espaço criativo', 'Atelier'],
+      features: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Bar'],
       price: 199000,
-      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Cafetaria']
+      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Salão de eventos', 'Cafetaria', 'Restaurante', 'Discoteca', 'Geladaria', 'Bar', 'Serviços de encomenda']
     },
     {
       id: 15,
-      name: 'Suíte Penthouse Vista',
+      name: 'Suíte Cobertura',
       image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80',
-      description: 'Localizada no último andar, oferece vista 360° da cidade de Luanda. Inclui café da manhã, Wi-Fi premium, serviço de quarto e acesso completo ao bar.',
-      status: 'Disponível',
-      capacity: 6,
-      features: ['Vista 360°', 'Terraço privativo', 'Bar privado', 'Jacuzzi exterior'],
+      description: 'Nossa suíte oferece conforto, elegância e uma experiência completa com café da manhã incluso, Wi-Fi gratuito, serviço de quarto, salão de eventos, cafetaria, restaurante, discoteca, geladaria, bar e serviços de encomenda.',
+      capacity: 4,
+      features: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Bar'],
       price: 269000,
-      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Bar']
+      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Salão de eventos', 'Cafetaria', 'Restaurante', 'Discoteca', 'Geladaria', 'Bar', 'Serviços de encomenda']
     },
     {
       id: 16,
-      name: 'Suíte Executive Platinum',
-      image: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      description: 'O máximo em luxo executivo, com serviços premium e acabamentos de primeira classe. Inclui café da manhã, Wi-Fi premium, serviço de quarto e salão de eventos.',
-      status: 'Disponível',
+      name: 'Suíte Platina',
+      image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80',
+      description: 'Nossa suíte oferece conforto, elegância e uma experiência completa com café da manhã incluso, Wi-Fi gratuito, serviço de quarto, salão de eventos, cafetaria, restaurante, discoteca, geladaria, bar e serviços de encomenda.',
       capacity: 4,
-      features: ['Acabamento premium', 'Mordomo pessoal', 'Lounge exclusivo', 'Sala de reuniões'],
+      features: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Bar'],
       price: 249000,
-      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Salão de eventos']
+      services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Salão de eventos', 'Cafetaria', 'Restaurante', 'Discoteca', 'Geladaria', 'Bar', 'Serviços de encomenda']
     }
   ];
 };
@@ -230,17 +213,6 @@ const Accommodations = () => {
                       alt={room.name}
                       className="w-full h-48 lg:h-64 object-cover transition-transform duration-300 group-hover:scale-105"
                     />
-                    <div className="absolute top-4 right-4">
-                      <span 
-                        className={`px-3 py-1 text-xs font-sora font-semibold ${
-                          room.status === 'Disponível' 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-red-100 text-red-800'
-                        }`}
-                      >
-                        {room.status}
-                      </span>
-                    </div>
                   </div>
                   
                   <div className="p-4 lg:p-6">

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -36,15 +35,25 @@ const Checkout = () => {
       roomPrices[room.name] = room.price;
     });
     
-    // Default prices if no rooms in localStorage
+    // Preços padrão iguais ao Accommodations.tsx
     if (rooms.length === 0) {
       return {
-        'Suíte Presidencial': 299000,
-        'Suíte Executive': 199000,
+        'Suíte Simples': 79000,
+        'Suíte Standard': 89000,
+        'Suíte Conforto': 99000,
+        'Suíte Luxo': 129000,
         'Suíte Premium': 149000,
-        'Suíte Classic': 99000,
-        'Suíte Garden': 174000,
-        'Suíte Family': 224000
+        'Suíte Master': 179000,
+        'Suíte Familiar': 199000,
+        'Suíte Executiva': 189000,
+        'Suíte Romântica': 159000,
+        'Suíte Terraço': 174000,
+        'Suíte Spa': 209000,
+        'Suíte Cultural': 169000,
+        'Suíte Moderna': 179000,
+        'Suíte Artística': 199000,
+        'Suíte Cobertura': 269000,
+        'Suíte Platina': 249000
       };
     }
     

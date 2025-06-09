@@ -36,7 +36,7 @@ const About = () => {
               </div>
               <div>
                 <img 
-                  src="https://images.unsplash.com/photo-1578683010236-d716f9a3f461?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+                  src="/hero5.png"
                   alt="Interior elegante do Maspe Residencial"
                   className="w-full h-96 object-cover shadow-lg"
                 />
@@ -46,7 +46,7 @@ const About = () => {
             <div className="grid md:grid-cols-3 gap-8 mb-16">
               <div className="text-center">
                 <div className="bg-charcoal text-pure-white w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <span className="font-sora text-2xl font-bold">12+</span>
+                  <span className="font-sora text-2xl font-bold">2+</span>
                 </div>
                 <h3 className="font-sora text-xl font-bold text-charcoal mb-2">Anos de Experiência</h3>
                 <p className="font-sora text-stone-grey">Mais de uma década servindo com excelência</p>

@@ -4,16 +4,16 @@ import { Link } from 'react-router-dom';
 
 const heroImages = [
   {
-    url: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-    alt: "Suite luxuosa do Maspe Residencial"
+    url: "/hero1.png",
+    alt: "Maspe Residencial"
   },
   {
-    url: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-    alt: "Restaurante elegante"
+    url: "/hero2.png",
+    alt: "Maspe Residencial Recepção"
   },
   {
-    url: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2126&q=80",
-    alt: "Bar e lounge"
+    url: "/hero3.png",
+    alt: "Maspe Residencial Acomodações"
   }
 ];
 

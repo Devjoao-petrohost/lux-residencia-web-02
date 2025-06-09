@@ -1,4 +1,3 @@
-
 import { Quote } from 'lucide-react';
 
 const depoimentos = [
@@ -13,6 +12,18 @@ const depoimentos = [
     texto: "Desde a receção até ao último detalhe do quarto, tudo reflete a qualidade e sofisticação que esperamos. Recomendo vivamente.",
     autor: "Dra. Helena R.",
     cargo: "Empresária"
+  },
+  {
+    id: 3,
+    texto: "Ambiente acolhedor, funcionários atenciosos e uma localização excelente. Voltarei sempre que estiver em Luanda!",
+    autor: "Sr. Paulo M.",
+    cargo: "Consultor"
+  },
+  {
+    id: 4,
+    texto: "O café da manhã é delicioso e as suítes são muito confortáveis. Me senti em casa durante toda a estadia.",
+    autor: "Sra. Juliana S.",
+    cargo: "Professora"
   }
 ];
 
@@ -29,28 +40,28 @@ const SecaoDepoimentos = () => {
           </p>
         </div>
         
-        <div className="grade-depoimentos grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+        <div className="grade-depoimentos grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-8">
           {depoimentos.map((depoimento, index) => (
             <div 
               key={depoimento.id} 
-              className="card-depoimento bg-pure-white p-8 lg:p-10 shadow-lg hover:shadow-xl transition-all duration-300 animacao-fade-in"
-              style={{ animationDelay: `${index * 0.2}s` }}
+              className="card-depoimento bg-pure-white p-5 lg:p-6 shadow-md hover:shadow-lg transition-all duration-300 animacao-fade-in rounded-none border-0"
+              style={{ animationDelay: `${index * 0.15}s`, border: 'none' }}
             >
-              <div className="icone-aspas mb-6">
-                <Quote className="w-12 h-12 text-stone-grey" />
+              <div className="icone-aspas mb-4">
+                <Quote className="w-8 h-8 text-stone-grey" />
               </div>
               
-              <blockquote className="citacao mb-8">
-                <p className="font-sora text-lg lg:text-xl text-charcoal leading-relaxed italic">
+              <blockquote className="citacao mb-6">
+                <p className="font-sora text-base lg:text-lg text-charcoal leading-relaxed">
                   "{depoimento.texto}"
                 </p>
               </blockquote>
               
               <div className="autor-info">
-                <h4 className="font-sora text-lg font-bold text-charcoal mb-1">
+                <h4 className="font-sora text-base font-bold text-charcoal mb-0.5">
                   {depoimento.autor}
                 </h4>
-                <p className="font-sora text-sm text-stone-grey">
+                <p className="font-sora text-xs text-stone-grey">
                   {depoimento.cargo}
                 </p>
               </div>

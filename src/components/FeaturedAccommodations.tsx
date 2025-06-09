@@ -1,42 +1,32 @@
-
 import { Link } from 'react-router-dom';
 
 const accommodations = [
   {
     id: 1,
-    name: 'Suíte Presidencial',
-    image: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-    description: 'O ápice do luxo e conforto com serviços premium inclusos',
+    name: 'Suíte Simples',
+    image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80',
+    description: 'O melhor custo-benefício para sua estadia confortável.',
     capacity: 4,
-    price: 299000,
+    price: 79000,
     services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Bar']
   },
   {
-    id: 2,
-    name: 'Suíte Executive',
-    image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80',
-    description: 'Elegância e funcionalidade para o viajante de negócios',
-    capacity: 2,
-    price: 199000,
-    services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Salão de eventos']
-  },
-  {
-    id: 3,
+    id: 5,
     name: 'Suíte Premium',
-    image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=M3wxMJA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2126&q=80',
-    description: 'Conforto sofisticado com vista privilegiada',
-    capacity: 3,
+    image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80',
+    description: 'Conforto sofisticado com vista privilegiada.',
+    capacity: 4,
     price: 149000,
-    services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Cafetaria']
+    services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Bar']
   },
   {
-    id: 4,
-    name: 'Suíte Classic',
-    image: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-    description: 'Qualidade e bom gosto para estadias de lazer',
-    capacity: 2,
-    price: 99000,
-    services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Bar']
+    id: 15,
+    name: 'Suíte Cobertura',
+    image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80',
+    description: 'A experiência mais exclusiva e elegante do hotel.',
+    capacity: 4,
+    price: 269000,
+    services: ['Café da manhã incluso', 'Wi-Fi gratuito', 'Serviço de quarto', 'Bar']
   }
 ];
 
@@ -53,22 +43,22 @@ const FeaturedAccommodations = () => {
           </p>
         </div>
         
-        <div className="grade-acomodacoes grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mb-8 lg:mb-16">
+        <div className="grade-acomodacoes grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-8 lg:mb-16 justify-center">
           {accommodations.map((room, index) => (
             <div 
               key={room.id} 
-              className="card-acomodacao group animacao-fade-in border border-stone-grey hover:shadow-lg transition-all duration-300"
-              style={{ animationDelay: `${index * 0.1}s` }}
+              className="card-acomodacao group animacao-fade-in hover:shadow-lg transition-all duration-300 overflow-hidden rounded-none"
+              style={{ animationDelay: `${index * 0.1}s`, border: 'none' }}
             >
-              <div className="container-imagem">
+              <div className="container-imagem relative w-full h-48 lg:h-64 overflow-hidden">
                 <img 
                   src={room.image}
                   alt={room.name}
-                  className="imagem-quarto transition-transform duration-300 group-hover:scale-105 w-full h-48 lg:h-64 object-cover"
+                  className="imagem-quarto transition-transform duration-300 group-hover:scale-105 w-full h-full object-cover"
                 />
                 <div className="sobreposicao-imagem"></div>
               </div>
-              <div className="conteudo-card p-4 lg:p-6">
+              <div className="conteudo-card p-4 lg:p-6 flex-shrink-0">
                 <h3 className="nome-quarto font-sora text-lg lg:text-xl font-bold text-charcoal mb-2 lg:mb-3">
                   {room.name}
                 </h3>
