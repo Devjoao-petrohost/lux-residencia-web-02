@@ -1,5 +1,5 @@
 
-import { Coffee, Wifi, RoomService, Calendar, Coffee as Cafeteria, UtensilsCrossed, Music, IceCream, Wine, Package } from 'lucide-react';
+import { Coffee, Wifi, BellRing, Calendar, Coffee as Cafeteria, UtensilsCrossed, Music, IceCream, Wine, Package } from 'lucide-react';
 
 const features = [
   {
@@ -13,7 +13,7 @@ const features = [
     description: "Internet de alta velocidade em todas as áreas"
   },
   {
-    icon: RoomService,
+    icon: BellRing,
     title: "Serviço de quarto",
     description: "Atendimento 24 horas no seu quarto"
   },
