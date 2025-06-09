@@ -17,7 +17,7 @@ const Header = () => {
   }, []);
 
   const headerClass = isHomePage 
-    ? `fixed top-0 left-0 right-0 header-fixed transition-all duration-300 ${
+    ? `fixed top-0 left-0 right-0 header-fixed transition-all duration-300 z-50 ${
         isScrolled 
           ? 'bg-off-white shadow-lg' 
           : 'bg-transparent'
@@ -41,7 +41,7 @@ const Header = () => {
             </a>
             <Link to="/acomodacoes">
               Acomodações
-            </a>
+            </Link>
             <a href="#servicos">
               Serviços
             </a>
