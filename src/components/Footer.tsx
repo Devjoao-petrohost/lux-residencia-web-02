@@ -4,10 +4,7 @@ const Footer = () => {
       <div className="container mx-auto px-6 py-12">
         <div className="grid md:grid-cols-4 gap-8">
           <div>
-            <h3 className="font-playfair text-xl font-bold mb-4">Maspe Residencial</h3>
-            <p className="text-stone-grey font-inter text-sm">
-              Sofisticação que Acolhe
-            </p>
+            <img src="/logo1.png" alt="Maspe Residencial Logo" className="h-12 w-auto lg:h-16 border-2 border-stone-grey rounded-md bg-white" />
           </div>
           
           <div>
