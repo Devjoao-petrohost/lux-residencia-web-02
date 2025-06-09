@@ -19,12 +19,9 @@ const Header = () => {
       <div className="container py-4 lg:py-6">
         <div className="flex items-center justify-between">
           <div className="flex flex-col items-start leading-tight ml-[-8px] lg:ml-[-16px]">
-            <Link to="/" className="logo-principal font-sora text-2xl lg:text-3xl font-bold text-charcoal hover:text-stone-grey transition-colors duration-300 pl-0">
-              Maspe Residencial
+            <Link to="/" className="logo-principal flex items-center gap-2">
+              <img src="/logo1.png" alt="Logo Maspe Residencial" className="h-12 w-auto lg:h-16 border-2 border-stone-grey rounded-md bg-white" />
             </Link>
-            <span className="text-black font-sora text-xs lg:text-sm font-medium mt-0.5 ml-0 tracking-wide">
-              Sofisticação que Acolhe
-            </span>
           </div>
           
           <nav className="navegacao-principal hidden lg:flex items-center space-x-8">
