@@ -37,7 +37,7 @@ const FeaturedAccommodations = () => {
     <section className="py-24 bg-pure-white">
       <div className="container">
         <div className="text-center mb-16">
-          <h2 className="font-playfair text-4xl md:text-5xl font-bold text-charcoal mb-6">
+          <h2 className="font-sora text-4xl md:text-5xl font-bold text-charcoal mb-6">
             Nossas Acomodações
           </h2>
           <p className="font-sora text-lg text-stone-grey max-w-2xl mx-auto">
@@ -57,7 +57,7 @@ const FeaturedAccommodations = () => {
                 <div className="image-overlay"></div>
               </div>
               <div className="accommodation-card-content">
-                <h3 className="font-playfair text-xl font-bold text-charcoal mb-3">
+                <h3 className="font-sora text-xl font-bold text-charcoal mb-3">
                   {room.name}
                 </h3>
                 <p className="font-sora text-stone-grey mb-4">

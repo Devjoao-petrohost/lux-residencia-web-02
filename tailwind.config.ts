@@ -70,7 +70,6 @@ export default {
 				'pure-white': '#FFFFFF'
 			},
 			fontFamily: {
-				'playfair': ['Playfair Display', 'serif'],
 				'sora': ['Sora', 'sans-serif'],
 			},
 			borderRadius: {

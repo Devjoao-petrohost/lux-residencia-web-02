@@ -59,8 +59,8 @@
     line-height: 1.6;
   }
 
-  h1, h2, h3 {
-    @apply font-playfair;
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-sora font-bold;
   }
 
   /* Floating Label Styles */
@@ -98,7 +98,7 @@
 
   /* Card spacing fixes */
   .accommodation-card {
-    @apply bg-pure-white p-0 overflow-hidden;
+    @apply bg-pure-white p-0 overflow-hidden shadow-lg;
   }
 
   .accommodation-card img {
@@ -128,7 +128,7 @@
   }
 
   .form-section h2 {
-    @apply font-playfair text-2xl font-bold text-charcoal mb-8 border-b border-stone-grey pb-4;
+    @apply font-sora text-2xl font-bold text-charcoal mb-8 border-b border-stone-grey pb-4;
   }
 
   /* Grid fixes */

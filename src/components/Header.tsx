@@ -28,7 +28,7 @@ const Header = () => {
     <header className={headerClass}>
       <div className="container py-6">
         <div className="flex items-center justify-between">
-          <Link to="/" className="font-playfair text-3xl font-bold text-charcoal">
+          <Link to="/" className="font-sora text-3xl font-bold text-charcoal">
             Maspe Residencial
           </Link>
           
@@ -41,7 +41,7 @@ const Header = () => {
             </a>
             <Link to="/acomodacoes">
               Acomodações
-            </Link>
+            </a>
             <a href="#servicos">
               Serviços
             </a>
