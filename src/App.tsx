@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,6 +13,8 @@ import Checkout from "./pages/Checkout";
 import Confirmation from "./pages/Confirmation";
 import Admin from "./pages/Admin";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminHotel from "./pages/AdminHotel";
+import AdminTotal from "./pages/AdminTotal";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from './hooks/useAuth';
 
