@@ -39,8 +39,9 @@ export interface ReservaHotel {
 
 export interface PerfilUsuario {
   id: string;
-  nome: string;
-  email: string;
+  nome?: string;
+  email?: string;
+  username?: string;
   role: 'admin_restaurante' | 'admin_hotel' | 'admin_total';
   created_at: string;
 }

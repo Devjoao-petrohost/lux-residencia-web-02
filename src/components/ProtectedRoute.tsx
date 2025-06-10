@@ -12,7 +12,7 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({ 
   children, 
   requiredRoles, 
-  redirectTo = '/admin' 
+  redirectTo 
 }: ProtectedRouteProps) {
   const { user, profile, loading } = useAuth();
   const navigate = useNavigate();
@@ -20,12 +20,26 @@ export function ProtectedRoute({
   useEffect(() => {
     if (!loading) {
       if (!user) {
-        navigate('/admin');
+        // Redirecionar para o login específico baseado no role requerido
+        if (requiredRoles.includes('admin_hotel')) {
+          navigate('/admin/hotel/login');
+        } else if (requiredRoles.includes('admin_total')) {
+          navigate('/admin/total/login');
+        } else {
+          navigate(redirectTo || '/admin');
+        }
         return;
       }
 
       if (!profile || !requiredRoles.includes(profile.role)) {
-        navigate(redirectTo);
+        // Se o usuário tem role diferente, redirecionar para login específico
+        if (requiredRoles.includes('admin_hotel')) {
+          navigate('/admin/hotel/login');
+        } else if (requiredRoles.includes('admin_total')) {
+          navigate('/admin/total/login');
+        } else {
+          navigate(redirectTo || '/admin');
+        }
         return;
       }
     }
