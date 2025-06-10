@@ -3,16 +3,15 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/hooks/use-toast';
 
 const Admin = () => {
   const navigate = useNavigate();
-  const { signIn } = useAuth();
   const [credentials, setCredentials] = useState({
-    email: '',
+    username: '',
     password: ''
   });
+
   const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,36 +19,31 @@ const Admin = () => {
     setCredentials(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    try {
-      const { error } = await signIn(credentials.email, credentials.password);
+    // Simulação de autenticação
+    setTimeout(() => {
+      console.log('Login attempt:', credentials);
       
-      if (error) {
-        toast({
-          title: "Erro de autenticação",
-          description: "Email ou senha incorretos.",
-          variant: "destructive"
-        });
-      } else {
+      // Simple authentication - in real app, this would be against a real backend
+      if (credentials.username === 'admin' && credentials.password === 'maspe2024') {
         toast({
           title: "Login realizado com sucesso!",
-          description: "Redirecionando...",
+          description: "Bem-vindo ao painel administrativo.",
         });
-        // O redirecionamento será baseado no role do usuário
-        navigate('/admin/total');
+        navigate('/admin/dashboard');
+      } else {
+        toast({
+          title: "Credenciais inválidas",
+          description: "Nome de usuário ou senha incorretos.",
+          variant: "destructive"
+        });
       }
-    } catch (error) {
-      toast({
-        title: "Erro",
-        description: "Ocorreu um erro inesperado.",
-        variant: "destructive"
-      });
-    } finally {
+      
       setIsLoading(false);
-    }
+    }, 1000);
   };
 
   return (
@@ -65,22 +59,22 @@ const Admin = () => {
                   Área Administrativa
                 </h1>
                 <p className="font-sora text-stone-grey">
-                  Acesso ao sistema integrado Hotel + Restaurante
+                  Acesso restrito a administradores
                 </p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-8">
                 <div className="floating-label">
                   <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={credentials.email}
+                    type="text"
+                    id="username"
+                    name="username"
+                    value={credentials.username}
                     onChange={handleInputChange}
                     placeholder=" "
                     required
                   />
-                  <label htmlFor="email">Email *</label>
+                  <label htmlFor="username">Nome de Usuário *</label>
                 </div>
 
                 <div className="floating-label">
@@ -107,11 +101,11 @@ const Admin = () => {
 
               <div className="mt-8 p-4 bg-off-white">
                 <p className="font-sora text-sm text-stone-grey text-center mb-2">
-                  <strong>Sistema Integrado:</strong>
+                  <strong>Credenciais de teste:</strong>
                 </p>
                 <p className="font-sora text-xs text-charcoal text-center">
-                  Hotel + Restaurante<br />
-                  Conectado ao Supabase
+                  Usuário: <strong>admin</strong><br />
+                  Senha: <strong>maspe2024</strong>
                 </p>
               </div>
 
