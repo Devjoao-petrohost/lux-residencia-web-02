@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
@@ -7,7 +6,7 @@ import { toast } from '@/hooks/use-toast';
 const AdminHotelLogin = () => {
   const navigate = useNavigate();
   const [credentials, setCredentials] = useState({
-    username: '',
+    email: '',
     password: ''
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -22,30 +21,9 @@ const AdminHotelLogin = () => {
     setIsLoading(true);
     
     try {
-      // ETAPA 1: Buscar o email correspondente ao username
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('email')
-        .eq('username', credentials.username)
-        .single();
-
-      if (profileError || !profile) {
-        console.error('Erro: Username não encontrado:', profileError);
-        toast({
-          title: "Erro de autenticação",
-          description: "Nome de usuário ou senha incorretos.",
-          variant: "destructive"
-        });
-        setIsLoading(false);
-        return;
-      }
-
-      const userEmail = profile.email;
-      console.log('Email encontrado para o username:', userEmail);
-
-      // ETAPA 2: Fazer o login com o EMAIL encontrado
+      // Autenticação com email e senha
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email: userEmail,
+        email: credentials.email,
         password: credentials.password,
       });
       
@@ -53,23 +31,22 @@ const AdminHotelLogin = () => {
         console.error('Erro de login:', authError);
         toast({
           title: "Erro de autenticação",
-          description: "Nome de usuário ou senha incorretos.",
+          description: "Email ou senha incorretos.",
           variant: "destructive"
         });
         setIsLoading(false);
         return;
       }
 
-      // ETAPA 3: Verificar o perfil após login bem-sucedido
+      // Verificar o perfil após login
       if (authData.user) {
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('role')
           .eq('id', authData.user.id)
-          .eq('role', 'admin_hotel')
           .single();
 
-        if (profileError || !profileData) {
+        if (profileError || !profileData || profileData.role !== 'admin_hotel') {
           await supabase.auth.signOut();
           toast({
             title: "Erro de autenticação",
@@ -80,7 +57,7 @@ const AdminHotelLogin = () => {
           return;
         }
 
-        // Sucesso total
+        // Login e verificação OK
         toast({
           title: "Login realizado com sucesso!",
           description: "Redirecionando para o painel...",
@@ -115,15 +92,15 @@ const AdminHotelLogin = () => {
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="floating-label">
               <input
-                type="text"
-                id="username"
-                name="username"
-                value={credentials.username}
+                type="email"
+                id="email"
+                name="email"
+                value={credentials.email}
                 onChange={handleInputChange}
                 placeholder=" "
                 required
               />
-              <label htmlFor="username">Nome de Usuário *</label>
+              <label htmlFor="email">Email *</label>
             </div>
 
             <div className="floating-label">

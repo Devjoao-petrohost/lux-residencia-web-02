@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
@@ -7,7 +6,7 @@ import { toast } from '@/hooks/use-toast';
 const AdminTotalLogin = () => {
   const navigate = useNavigate();
   const [credentials, setCredentials] = useState({
-    username: '',
+    email: '',
     password: ''
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -22,30 +21,9 @@ const AdminTotalLogin = () => {
     setIsLoading(true);
     
     try {
-      // ETAPA 1: Buscar o email correspondente ao username
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('email')
-        .eq('username', credentials.username)
-        .single();
-
-      if (profileError || !profile) {
-        console.error('Erro: Username não encontrado:', profileError);
-        toast({
-          title: "Erro de autenticação",
-          description: "Nome de usuário ou senha incorretos.",
-          variant: "destructive"
-        });
-        setIsLoading(false);
-        return;
-      }
-
-      const userEmail = profile.email;
-      console.log('Email encontrado para o username:', userEmail);
-
-      // ETAPA 2: Fazer o login com o EMAIL encontrado
+      // Fazer o login direto com o EMAIL fornecido
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email: userEmail,
+        email: credentials.email,
         password: credentials.password,
       });
       
@@ -53,14 +31,14 @@ const AdminTotalLogin = () => {
         console.error('Erro de login:', authError);
         toast({
           title: "Erro de autenticação",
-          description: "Nome de usuário ou senha incorretos.",
+          description: "Email ou senha incorretos.",
           variant: "destructive"
         });
         setIsLoading(false);
         return;
       }
 
-      // ETAPA 3: Verificar o perfil após login bem-sucedido
+      // Verificar o perfil após login bem-sucedido
       if (authData.user) {
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
@@ -115,15 +93,15 @@ const AdminTotalLogin = () => {
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="floating-label">
               <input
-                type="text"
-                id="username"
-                name="username"
-                value={credentials.username}
+                type="email"
+                id="email"
+                name="email"
+                value={credentials.email}
                 onChange={handleInputChange}
                 placeholder=" "
                 required
               />
-              <label htmlFor="username">Nome de Usuário *</label>
+              <label htmlFor="email">Email *</label>
             </div>
 
             <div className="floating-label">
