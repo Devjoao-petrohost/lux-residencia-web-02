@@ -9,7 +9,8 @@ import { useQuartosHotel } from '@/hooks/useQuartosHotel';
 import { useReservasHotel } from '@/hooks/useReservasHotel';
 import { QuartoForm } from '@/components/QuartoForm';
 import { ReservasList } from '@/components/ReservasList';
-import { Plus, Edit, Trash2, Eye, Users, Calendar, DollarSign, Hotel } from 'lucide-react';
+import { ReservaPresencialForm } from '@/components/ReservaPresencialForm';
+import { Plus, Edit, Trash2, Eye, Users, Calendar, DollarSign, Hotel, UserPlus } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import type { QuartoHotel } from '@/lib/supabase';
 
@@ -24,10 +25,11 @@ const AdminHotel = () => {
 const AdminHotelContent = () => {
   const { profile, signOut } = useAuth();
   const { quartos, loading: loadingQuartos, criarQuarto, atualizarQuarto, excluirQuarto } = useQuartosHotel();
-  const { reservas, loading: loadingReservas } = useReservasHotel();
+  const { reservas, loading: loadingReservas, carregarReservas } = useReservasHotel();
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedQuarto, setSelectedQuarto] = useState<QuartoHotel | undefined>();
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isReservaPresencialOpen, setIsReservaPresencialOpen] = useState(false);
 
   const stats = {
     totalQuartos: quartos.length,
@@ -71,6 +73,10 @@ const AdminHotelContent = () => {
 
   const handleStatusChange = async (quartoId: string, novoStatus: 'disponivel' | 'ocupado' | 'manutencao') => {
     await atualizarQuarto(quartoId, { status: novoStatus });
+  };
+
+  const handleReservaPresencialSuccess = () => {
+    carregarReservas();
   };
 
   return (
@@ -254,7 +260,16 @@ const AdminHotelContent = () => {
             {/* Reservas Tab */}
             {activeTab === 'reservas' && (
               <div>
-                <h2 className="font-sora text-3xl font-bold text-charcoal mb-8">Gestão de Reservas</h2>
+                <div className="flex justify-between items-center mb-8">
+                  <h2 className="font-sora text-3xl font-bold text-charcoal">Gestão de Reservas</h2>
+                  <button
+                    onClick={() => setIsReservaPresencialOpen(true)}
+                    className="btn-primary flex items-center space-x-2"
+                  >
+                    <UserPlus className="w-5 h-5" />
+                    <span>Nova Reserva Presencial</span>
+                  </button>
+                </div>
                 <ReservasList />
               </div>
             )}
@@ -270,6 +285,13 @@ const AdminHotelContent = () => {
         onCancel={() => setIsFormOpen(false)}
         isOpen={isFormOpen}
       />
+
+      {isReservaPresencialOpen && (
+        <ReservaPresencialForm
+          onClose={() => setIsReservaPresencialOpen(false)}
+          onSuccess={handleReservaPresencialSuccess}
+        />
+      )}
     </div>
   );
 };

@@ -22,15 +22,14 @@ const AdminHotelLogin = () => {
     setIsLoading(true);
     
     try {
-      // Buscar o email associado ao username
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('username', credentials.username)
-        .eq('role', 'admin_hotel')
-        .single();
+      // Mapear usernames para emails internos
+      const emailMap: { [key: string]: string } = {
+        'adminhotel': 'hotel@maspe.local'
+      };
 
-      if (profileError || !profile) {
+      const email = emailMap[credentials.username];
+      
+      if (!email) {
         toast({
           title: "Erro de autenticação",
           description: "Nome de usuário ou senha incorretos.",
@@ -40,30 +39,14 @@ const AdminHotelLogin = () => {
         return;
       }
 
-      // Buscar o email do usuário na tabela auth.users
-      const { data: user, error: userError } = await supabase
-        .from('auth.users')
-        .select('email')
-        .eq('id', profile.id)
-        .single();
-
-      if (userError || !user) {
-        toast({
-          title: "Erro de autenticação",
-          description: "Erro interno. Contacte o administrador.",
-          variant: "destructive"
-        });
-        setIsLoading(false);
-        return;
-      }
-
-      // Fazer login com o email encontrado
+      // Fazer login diretamente com o email mapeado
       const { error } = await supabase.auth.signInWithPassword({
-        email: user.email,
+        email: email,
         password: credentials.password,
       });
       
       if (error) {
+        console.error('Erro de login:', error);
         toast({
           title: "Erro de autenticação",
           description: "Nome de usuário ou senha incorretos.",
@@ -77,6 +60,7 @@ const AdminHotelLogin = () => {
         navigate('/admin/hotel');
       }
     } catch (error) {
+      console.error('Erro inesperado:', error);
       toast({
         title: "Erro",
         description: "Ocorreu um erro inesperado.",
@@ -93,7 +77,7 @@ const AdminHotelLogin = () => {
         <div className="bg-pure-white p-12 shadow-lg">
           <div className="text-center mb-12">
             <h1 className="font-sora text-3xl font-bold text-charcoal mb-4">
-              Acesso ao Painel de Gestão do Hotel
+              Painel de Gestão do Hotel
             </h1>
             <p className="font-sora text-stone-grey">
               Área restrita para gestores do hotel
