@@ -22,14 +22,15 @@ const AdminHotelLogin = () => {
     setIsLoading(true);
     
     try {
-      // Mapear usernames para emails internos
-      const emailMap: { [key: string]: string } = {
-        'adminhotel': 'hotel@maspe.local'
-      };
+      // Primeiro, encontrar o email correspondente ao username
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('username', credentials.username)
+        .eq('role', 'admin_hotel')
+        .single();
 
-      const email = emailMap[credentials.username];
-      
-      if (!email) {
+      if (profileError || !profileData) {
         toast({
           title: "Erro de autenticação",
           description: "Nome de usuário ou senha incorretos.",
@@ -39,9 +40,26 @@ const AdminHotelLogin = () => {
         return;
       }
 
-      // Fazer login diretamente com o email mapeado
+      // Agora buscar o email do usuário na tabela auth.users
+      const { data: userData, error: userError } = await supabase
+        .from('auth.users')
+        .select('email')
+        .eq('id', profileData.id)
+        .single();
+
+      if (userError || !userData) {
+        toast({
+          title: "Erro de autenticação",
+          description: "Erro interno do sistema.",
+          variant: "destructive"
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      // Fazer login com o email encontrado
       const { error } = await supabase.auth.signInWithPassword({
-        email: email,
+        email: userData.email,
         password: credentials.password,
       });
       
