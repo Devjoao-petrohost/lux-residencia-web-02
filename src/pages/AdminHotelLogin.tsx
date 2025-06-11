@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
@@ -22,15 +21,14 @@ const AdminHotelLogin = () => {
     setIsLoading(true);
     
     try {
-      // Primeiro, encontrar o email correspondente ao username
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('username', credentials.username)
-        .eq('role', 'admin_hotel')
-        .single();
+      // Mapear usernames para emails internos (ANTES do login)
+      const emailMap: { [key: string]: string } = {
+        'adminhotel': 'hotel@maspe.local'
+      };
 
-      if (profileError || !profileData) {
+      const email = emailMap[credentials.username];
+      
+      if (!email) {
         toast({
           title: "Erro de autenticação",
           description: "Nome de usuário ou senha incorretos.",
@@ -40,37 +38,44 @@ const AdminHotelLogin = () => {
         return;
       }
 
-      // Agora buscar o email do usuário na tabela auth.users
-      const { data: userData, error: userError } = await supabase
-        .from('auth.users')
-        .select('email')
-        .eq('id', profileData.id)
-        .single();
-
-      if (userError || !userData) {
-        toast({
-          title: "Erro de autenticação",
-          description: "Erro interno do sistema.",
-          variant: "destructive"
-        });
-        setIsLoading(false);
-        return;
-      }
-
-      // Fazer login com o email encontrado
-      const { error } = await supabase.auth.signInWithPassword({
-        email: userData.email,
+      // PRIMEIRO: Fazer login com email e senha
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email: email,
         password: credentials.password,
       });
       
-      if (error) {
-        console.error('Erro de login:', error);
+      if (authError) {
+        console.error('Erro de login:', authError);
         toast({
           title: "Erro de autenticação",
           description: "Nome de usuário ou senha incorretos.",
           variant: "destructive"
         });
-      } else {
+        setIsLoading(false);
+        return;
+      }
+
+      // SEGUNDO: Após login bem-sucedido, verificar o perfil
+      if (authData.user) {
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', authData.user.id)
+          .eq('role', 'admin_hotel')
+          .single();
+
+        if (profileError || !profileData) {
+          await supabase.auth.signOut(); // Logout se não tiver o role correto
+          toast({
+            title: "Erro de autenticação",
+            description: "Acesso não autorizado para este painel.",
+            variant: "destructive"
+          });
+          setIsLoading(false);
+          return;
+        }
+
+        // Sucesso total
         toast({
           title: "Login realizado com sucesso!",
           description: "Redirecionando para o painel...",
