@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
@@ -21,14 +22,15 @@ const AdminHotelLogin = () => {
     setIsLoading(true);
     
     try {
-      // Mapear usernames para emails internos (ANTES do login)
-      const emailMap: { [key: string]: string } = {
-        'adminhotel': 'hotel@maspe.local'
-      };
+      // ETAPA 1: Buscar o email correspondente ao username
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('username', credentials.username)
+        .single();
 
-      const email = emailMap[credentials.username];
-      
-      if (!email) {
+      if (profileError || !profile) {
+        console.error('Erro: Username não encontrado:', profileError);
         toast({
           title: "Erro de autenticação",
           description: "Nome de usuário ou senha incorretos.",
@@ -38,9 +40,12 @@ const AdminHotelLogin = () => {
         return;
       }
 
-      // PRIMEIRO: Fazer login com email e senha
+      const userEmail = profile.email;
+      console.log('Email encontrado para o username:', userEmail);
+
+      // ETAPA 2: Fazer o login com o EMAIL encontrado
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email: email,
+        email: userEmail,
         password: credentials.password,
       });
       
@@ -55,7 +60,7 @@ const AdminHotelLogin = () => {
         return;
       }
 
-      // SEGUNDO: Após login bem-sucedido, verificar o perfil
+      // ETAPA 3: Verificar o perfil após login bem-sucedido
       if (authData.user) {
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
@@ -65,7 +70,7 @@ const AdminHotelLogin = () => {
           .single();
 
         if (profileError || !profileData) {
-          await supabase.auth.signOut(); // Logout se não tiver o role correto
+          await supabase.auth.signOut();
           toast({
             title: "Erro de autenticação",
             description: "Acesso não autorizado para este painel.",
