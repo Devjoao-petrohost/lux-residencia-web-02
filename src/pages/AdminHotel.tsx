@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -15,6 +14,8 @@ import { toast } from '@/hooks/use-toast';
 import type { QuartoHotel } from '@/lib/supabase';
 
 const AdminHotel = () => {
+  console.log('🏨 AdminHotel: Componente montado');
+  
   return (
     <ProtectedRoute requiredRoles={['admin_hotel', 'admin_total']}>
       <AdminHotelContent />
@@ -23,6 +24,8 @@ const AdminHotel = () => {
 };
 
 const AdminHotelContent = () => {
+  console.log('🏨 AdminHotelContent: Renderizando conteúdo');
+  
   const { profile, signOut } = useAuth();
   const { quartos, loading: loadingQuartos, criarQuarto, atualizarQuarto, excluirQuarto } = useQuartosHotel();
   const { reservas, loading: loadingReservas, carregarReservas } = useReservasHotel();
@@ -30,6 +33,8 @@ const AdminHotelContent = () => {
   const [selectedQuarto, setSelectedQuarto] = useState<QuartoHotel | undefined>();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isReservaPresencialOpen, setIsReservaPresencialOpen] = useState(false);
+
+  console.log('🏨 AdminHotelContent: Estado do perfil:', profile);
 
   const stats = {
     totalQuartos: quartos.length,
@@ -39,6 +44,7 @@ const AdminHotelContent = () => {
   };
 
   const handleLogout = async () => {
+    console.log('🚪 AdminHotel: Fazendo logout...');
     await signOut();
     toast({
       title: "Logout realizado",
@@ -92,7 +98,10 @@ const AdminHotelContent = () => {
                   Painel do Hotel
                 </h1>
                 <p className="font-sora text-xl text-stone-grey">
-                  Bem-vindo, {profile?.nome}
+                  Bem-vindo, {profile?.nome || profile?.email || 'Usuário'}
+                </p>
+                <p className="font-sora text-sm text-stone-grey">
+                  Role: {profile?.role}
                 </p>
               </div>
               <div className="flex space-x-4">
