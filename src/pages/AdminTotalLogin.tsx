@@ -1,7 +1,9 @@
+
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { toast } from '@/hooks/use-toast';
+import { Shield, Mail, Lock, ArrowLeft, Loader } from 'lucide-react';
 
 const AdminTotalLogin = () => {
   const navigate = useNavigate();
@@ -18,6 +20,16 @@ const AdminTotalLogin = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!credentials.email || !credentials.password) {
+      toast({
+        title: "Campos obrigatórios",
+        description: "Por favor, preencha email e senha.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsLoading(true);
     
     try {
@@ -34,7 +46,6 @@ const AdminTotalLogin = () => {
           description: "Email ou senha incorretos.",
           variant: "destructive"
         });
-        setIsLoading(false);
         return;
       }
 
@@ -42,7 +53,7 @@ const AdminTotalLogin = () => {
       if (authData.user) {
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('role')
+          .select('role, nome')
           .eq('id', authData.user.id)
           .eq('role', 'admin_total')
           .single();
@@ -50,26 +61,25 @@ const AdminTotalLogin = () => {
         if (profileError || !profileData) {
           await supabase.auth.signOut();
           toast({
-            title: "Erro de autenticação",
-            description: "Acesso não autorizado para este painel.",
+            title: "Acesso negado",
+            description: "Você não tem permissão para acessar o painel executivo.",
             variant: "destructive"
           });
-          setIsLoading(false);
           return;
         }
 
         // Sucesso total
         toast({
-          title: "Login realizado com sucesso!",
-          description: "Redirecionando para o painel...",
+          title: "Login executivo realizado!",
+          description: `Bem-vindo ao painel executivo${profileData.nome ? `, ${profileData.nome}` : ''}!`,
         });
         navigate('/admin/total');
       }
     } catch (error) {
       console.error('Erro inesperado:', error);
       toast({
-        title: "Erro",
-        description: "Ocorreu um erro inesperado.",
+        title: "Erro do sistema",
+        description: "Ocorreu um erro inesperado. Tente novamente.",
         variant: "destructive"
       });
     } finally {
@@ -78,60 +88,102 @@ const AdminTotalLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-off-white flex items-center justify-center">
-      <div className="container max-w-md mx-auto">
-        <div className="bg-pure-white p-12 shadow-lg">
-          <div className="text-center mb-12">
-            <h1 className="font-sora text-3xl font-bold text-charcoal mb-4">
-              Painel de Controlo Total
-            </h1>
-            <p className="font-sora text-stone-grey">
-              Área restrita para administração executiva
-            </p>
+    <div className="min-h-screen bg-gradient-to-br from-charcoal via-stone-800 to-stone-900 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="flex justify-center mb-6">
+            <div className="bg-pure-white p-4 rounded-full shadow-xl">
+              <Shield className="w-12 h-12 text-charcoal" />
+            </div>
           </div>
+          <h1 className="font-sora text-3xl font-bold text-pure-white mb-2">
+            Painel Executivo
+          </h1>
+          <p className="font-sora text-stone-grey">
+            Acesso restrito para administração total
+          </p>
+        </div>
 
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="floating-label">
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={credentials.email}
-                onChange={handleInputChange}
-                placeholder=" "
-                required
-              />
-              <label htmlFor="email">Email *</label>
+        {/* Form */}
+        <div className="bg-pure-white rounded-xl shadow-2xl border border-stone-300 p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block font-sora text-sm font-medium text-charcoal mb-2">
+                Email Executivo
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-stone-grey w-5 h-5" />
+                <input
+                  type="email"
+                  name="email"
+                  value={credentials.email}
+                  onChange={handleInputChange}
+                  className="w-full pl-12 pr-4 py-3 border border-stone-grey rounded-lg font-sora focus:outline-none focus:ring-2 focus:ring-charcoal focus:border-transparent"
+                  placeholder="admin@masperesidencial.ao"
+                  required
+                  disabled={isLoading}
+                />
+              </div>
             </div>
 
-            <div className="floating-label">
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={credentials.password}
-                onChange={handleInputChange}
-                placeholder=" "
-                required
-              />
-              <label htmlFor="password">Senha *</label>
+            <div>
+              <label className="block font-sora text-sm font-medium text-charcoal mb-2">
+                Senha Executiva
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-stone-grey w-5 h-5" />
+                <input
+                  type="password"
+                  name="password"
+                  value={credentials.password}
+                  onChange={handleInputChange}
+                  className="w-full pl-12 pr-4 py-3 border border-stone-grey rounded-lg font-sora focus:outline-none focus:ring-2 focus:ring-charcoal focus:border-transparent"
+                  placeholder="••••••••••"
+                  required
+                  disabled={isLoading}
+                />
+              </div>
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="btn-primary w-full py-4 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-charcoal text-pure-white py-3 rounded-lg font-sora font-semibold hover:bg-stone-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
             >
-              {isLoading ? 'Verificando...' : 'Entrar'}
+              {isLoading ? (
+                <>
+                  <Loader className="w-5 h-5 animate-spin" />
+                  <span>Autenticando...</span>
+                </>
+              ) : (
+                <span>Acessar Painel Executivo</span>
+              )}
             </button>
           </form>
 
-          <div className="mt-8 p-4 bg-off-white">
-            <p className="font-sora text-sm text-stone-grey text-center">
-              <strong>Acesso Executivo:</strong><br />
-              Dashboard Completo Hotel + Restaurante
-            </p>
+          <div className="mt-6 p-4 bg-charcoal text-pure-white rounded-lg">
+            <h3 className="font-sora text-sm font-semibold mb-2">
+              Painel de Controle Total
+            </h3>
+            <ul className="font-sora text-xs text-stone-300 space-y-1">
+              <li>• Dashboard executivo completo</li>
+              <li>• Gestão de hotel e restaurante</li>
+              <li>• Relatórios financeiros avançados</li>
+              <li>• Controle total do sistema</li>
+            </ul>
           </div>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center mt-8">
+          <Link 
+            to="/" 
+            className="inline-flex items-center space-x-2 font-sora text-sm text-stone-400 hover:text-pure-white transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Voltar ao site principal</span>
+          </Link>
         </div>
       </div>
     </div>
