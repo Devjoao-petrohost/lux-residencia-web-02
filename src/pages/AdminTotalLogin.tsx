@@ -33,32 +33,70 @@ const AdminTotalLogin = () => {
     setIsLoading(true);
     
     try {
-      // Fazer o login direto com o EMAIL fornecido
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email: credentials.email,
+      console.log('🔐 Iniciando login executivo com email:', credentials.email);
+      
+      // Codificar a senha para lidar com caracteres especiais como '+'
+      const encodedPassword = encodeURIComponent(credentials.password);
+      console.log('🔐 Senha original tem caracteres especiais:', credentials.password !== encodedPassword);
+      
+      // Tentar primeiro com a senha original
+      console.log('🔐 Tentativa 1: Senha original');
+      let { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email: credentials.email.trim(),
         password: credentials.password,
       });
       
+      // Se falhou e a senha tem caracteres especiais, tentar com codificação
+      if (authError && credentials.password !== encodedPassword) {
+        console.log('🔐 Tentativa 2: Senha codificada');
+        const result = await supabase.auth.signInWithPassword({
+          email: credentials.email.trim(),
+          password: encodedPassword,
+        });
+        authData = result.data;
+        authError = result.error;
+      }
+      
       if (authError) {
-        console.error('Erro de login:', authError);
+        console.error('❌ Erro de autenticação executiva:', authError);
+        
+        // Mensagens de erro mais específicas
+        let errorMessage = "Email ou senha incorretos.";
+        
+        if (authError.message?.includes('Invalid login credentials')) {
+          errorMessage = "Credenciais inválidas. Verifique seu email e senha.";
+        } else if (authError.message?.includes('Email not confirmed')) {
+          errorMessage = "Email não confirmado. Verifique sua caixa de entrada.";
+        } else if (authError.message?.includes('Too many requests')) {
+          errorMessage = "Muitas tentativas. Aguarde alguns minutos e tente novamente.";
+        }
+        
         toast({
           title: "Erro de autenticação",
-          description: "Email ou senha incorretos.",
+          description: errorMessage,
           variant: "destructive"
         });
         return;
       }
 
+      console.log('✅ Login executivo bem-sucedido, verificando perfil...');
+
       // Verificar o perfil após login bem-sucedido
       if (authData.user) {
+        console.log('👤 Usuário executivo autenticado, ID:', authData.user.id);
+        
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('role, nome')
+          .select('role, nome, email')
           .eq('id', authData.user.id)
           .eq('role', 'admin_total')
           .single();
 
+        console.log('📋 Dados do perfil executivo:', profileData);
+        console.log('📋 Erro do perfil executivo:', profileError);
+
         if (profileError || !profileData) {
+          console.error('❌ Perfil executivo não encontrado ou erro:', profileError);
           await supabase.auth.signOut();
           toast({
             title: "Acesso negado",
@@ -69,6 +107,7 @@ const AdminTotalLogin = () => {
         }
 
         // Sucesso total
+        console.log('🎉 Login executivo e verificação concluídos com sucesso!');
         toast({
           title: "Login executivo realizado!",
           description: `Bem-vindo ao painel executivo${profileData.nome ? `, ${profileData.nome}` : ''}!`,
@@ -76,7 +115,7 @@ const AdminTotalLogin = () => {
         navigate('/admin/total');
       }
     } catch (error) {
-      console.error('Erro inesperado:', error);
+      console.error('💥 Erro inesperado no login executivo:', error);
       toast({
         title: "Erro do sistema",
         description: "Ocorreu um erro inesperado. Tente novamente.",
@@ -173,6 +212,15 @@ const AdminTotalLogin = () => {
               <li>• Controle total do sistema</li>
             </ul>
           </div>
+
+          {/* Debug Info em desenvolvimento */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <p className="text-xs text-yellow-800 font-mono">
+                Debug: Verifique o console do navegador para logs detalhados
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Footer */}

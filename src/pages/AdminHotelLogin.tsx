@@ -33,31 +33,80 @@ const AdminHotelLogin = () => {
     setIsLoading(true);
     
     try {
-      // Autenticação com email e senha
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email: credentials.email,
+      console.log('🔐 Iniciando login com email:', credentials.email);
+      
+      // Codificar a senha para lidar com caracteres especiais como '+'
+      const encodedPassword = encodeURIComponent(credentials.password);
+      console.log('🔐 Senha original tem caracteres especiais:', credentials.password !== encodedPassword);
+      
+      // Tentar primeiro com a senha original
+      console.log('🔐 Tentativa 1: Senha original');
+      let { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email: credentials.email.trim(),
         password: credentials.password,
       });
       
+      // Se falhou e a senha tem caracteres especiais, tentar com codificação
+      if (authError && credentials.password !== encodedPassword) {
+        console.log('🔐 Tentativa 2: Senha codificada');
+        const result = await supabase.auth.signInWithPassword({
+          email: credentials.email.trim(),
+          password: encodedPassword,
+        });
+        authData = result.data;
+        authError = result.error;
+      }
+      
       if (authError) {
-        console.error('Erro de login:', authError);
+        console.error('❌ Erro de autenticação:', authError);
+        
+        // Mensagens de erro mais específicas
+        let errorMessage = "Email ou senha incorretos.";
+        
+        if (authError.message?.includes('Invalid login credentials')) {
+          errorMessage = "Credenciais inválidas. Verifique seu email e senha.";
+        } else if (authError.message?.includes('Email not confirmed')) {
+          errorMessage = "Email não confirmado. Verifique sua caixa de entrada.";
+        } else if (authError.message?.includes('Too many requests')) {
+          errorMessage = "Muitas tentativas. Aguarde alguns minutos e tente novamente.";
+        }
+        
         toast({
           title: "Erro de autenticação",
-          description: "Email ou senha incorretos.",
+          description: errorMessage,
           variant: "destructive"
         });
         return;
       }
 
+      console.log('✅ Login bem-sucedido, verificando perfil...');
+      
       // Verificar o perfil após login
       if (authData.user) {
+        console.log('👤 Usuário autenticado, ID:', authData.user.id);
+        
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('role, nome')
+          .select('role, nome, email')
           .eq('id', authData.user.id)
           .single();
 
-        if (profileError || !profileData || !['admin_hotel', 'admin_total'].includes(profileData.role)) {
+        console.log('📋 Dados do perfil:', profileData);
+        console.log('📋 Erro do perfil:', profileError);
+
+        if (profileError) {
+          console.error('❌ Erro ao buscar perfil:', profileError);
+          await supabase.auth.signOut();
+          toast({
+            title: "Erro de perfil",
+            description: "Não foi possível carregar seu perfil. Contate o administrador.",
+            variant: "destructive"
+          });
+          return;
+        }
+
+        if (!profileData || !['admin_hotel', 'admin_total'].includes(profileData.role)) {
+          console.error('❌ Role inválida:', profileData?.role);
           await supabase.auth.signOut();
           toast({
             title: "Acesso negado",
@@ -68,6 +117,7 @@ const AdminHotelLogin = () => {
         }
 
         // Login e verificação OK
+        console.log('🎉 Login e verificação concluídos com sucesso!');
         toast({
           title: "Login realizado com sucesso!",
           description: `Bem-vindo${profileData.nome ? `, ${profileData.nome}` : ''}!`,
@@ -75,7 +125,7 @@ const AdminHotelLogin = () => {
         navigate('/admin/hotel');
       }
     } catch (error) {
-      console.error('Erro inesperado:', error);
+      console.error('💥 Erro inesperado:', error);
       toast({
         title: "Erro do sistema",
         description: "Ocorreu um erro inesperado. Tente novamente.",
@@ -172,6 +222,15 @@ const AdminHotelLogin = () => {
               <li>• Atendimento presencial</li>
             </ul>
           </div>
+
+          {/* Debug Info em desenvolvimento */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <p className="text-xs text-yellow-800 font-mono">
+                Debug: Verifique o console do navegador para logs detalhados
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Footer */}
