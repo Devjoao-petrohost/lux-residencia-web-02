@@ -9,6 +9,48 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_access_logs: {
+        Row: {
+          action: string | null
+          created_at: string | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          action?: string | null
+          created_at?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string | null
+          created_at?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      admin_settings: {
+        Row: {
+          id: string
+          last_updated: string | null
+          setting_name: string | null
+          setting_value: Json | null
+        }
+        Insert: {
+          id?: string
+          last_updated?: string | null
+          setting_name?: string | null
+          setting_value?: Json | null
+        }
+        Update: {
+          id?: string
+          last_updated?: string | null
+          setting_name?: string | null
+          setting_value?: Json | null
+        }
+        Relationships: []
+      }
       hotel_quartos: {
         Row: {
           capacidade: number
@@ -255,6 +297,7 @@ export type Database = {
           role: string | null
           status: string | null
           tentativas_login: number | null
+          tentativas_login_total: number | null
           ultima_tentativa: string | null
           username: string | null
         }
@@ -267,6 +310,7 @@ export type Database = {
           role?: string | null
           status?: string | null
           tentativas_login?: number | null
+          tentativas_login_total?: number | null
           ultima_tentativa?: string | null
           username?: string | null
         }
@@ -279,6 +323,7 @@ export type Database = {
           role?: string | null
           status?: string | null
           tentativas_login?: number | null
+          tentativas_login_total?: number | null
           ultima_tentativa?: string | null
           username?: string | null
         }
@@ -604,6 +649,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_current_user_role: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       get_public_profile: {
         Args: { username_input: string }
         Returns: {
