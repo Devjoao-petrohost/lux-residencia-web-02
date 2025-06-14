@@ -1,16 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/hooks/useAuth'; // Import useAuth
 import { toast } from '@/hooks/use-toast';
 import { Hotel, Mail, Lock, ArrowLeft, Loader } from 'lucide-react';
 
 const AdminHotelLogin = () => {
   const navigate = useNavigate();
+  const { user, profile, loading: authLoading, authError, signIn } = useAuth(); // Destructure from useAuth
+
   const [credentials, setCredentials] = useState({
     email: '',
     password: ''
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // Local loading state for the form button
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -31,100 +33,94 @@ const AdminHotelLogin = () => {
 
     setIsLoading(true);
     
-    try {
-      console.log('🔐 Iniciando login com email:', credentials.email);
+    // Use signIn from useAuth
+    const { error: signInError } = await signIn(credentials.email.trim(), credentials.password);
+    
+    if (signInError) {
+      console.error('❌ AdminHotelLogin: Erro direto do signIn (useAuth):', signInError);
       
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email: credentials.email.trim(),
-        password: credentials.password, // Usando a senha original diretamente
-      });
-      
-      if (authError) {
-        console.error('❌ Erro de autenticação:', authError);
-        
-        let errorMessage = "Email ou senha incorretos.";
-        
-        if (authError.message?.includes('Invalid login credentials')) {
-          errorMessage = "Credenciais inválidas. Verifique seu email e senha.";
-        } else if (authError.message?.includes('Email not confirmed')) {
-          errorMessage = "Email não confirmado. Verifique sua caixa de entrada.";
-        } else if (authError.message?.includes('Too many requests')) {
-          errorMessage = "Muitas tentativas. Aguarde alguns minutos e tente novamente.";
-        }
-        
-        toast({
-          title: "Erro de autenticação",
-          description: errorMessage,
-          variant: "destructive"
-        });
-        setIsLoading(false); // Adicionado
-        return;
-      }
-
-      console.log('✅ Login bem-sucedido, verificando perfil...');
-      
-      if (authData.user) {
-        console.log('👤 Usuário autenticado, ID:', authData.user.id);
-        
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('role, nome, email')
-          .eq('id', authData.user.id)
-          .single();
-
-        console.log('📋 Dados do perfil:', profileData);
-        console.log('📋 Erro do perfil:', profileError);
-
-        if (profileError) {
-          console.error('❌ Erro ao buscar perfil:', profileError);
-          await supabase.auth.signOut(); // Deslogar se houver erro no perfil
-          toast({
-            title: "Erro de perfil",
-            description: "Não foi possível carregar seu perfil. Contate o administrador.",
-            variant: "destructive"
-          });
-          setIsLoading(false); // Adicionado
-          return;
-        }
-
-        if (!profileData || !['admin_hotel', 'admin_total'].includes(profileData.role)) {
-          console.error('❌ Role inválida:', profileData?.role);
-          await supabase.auth.signOut(); // Deslogar se a role for inválida
-          toast({
-            title: "Acesso negado",
-            description: "Você não tem permissão para acessar este painel.",
-            variant: "destructive"
-          });
-          setIsLoading(false); // Adicionado
-          return;
-        }
-
-        console.log('🎉 Login e verificação concluídos com sucesso!');
-        toast({
-          title: "Login realizado com sucesso!",
-          description: `Bem-vindo${profileData.nome ? `, ${profileData.nome}` : ''}!`,
-        });
-        navigate('/admin/hotel');
+      let errorMessage = "Email ou senha incorretos.";
+      if (signInError.message?.includes('Invalid login credentials')) {
+        errorMessage = "Credenciais inválidas. Verifique seu email e senha.";
+      } else if (signInError.message?.includes('Email not confirmed')) {
+        errorMessage = "Email não confirmado. Verifique sua caixa de entrada.";
+      } else if (signInError.message?.includes('Too many requests')) {
+        errorMessage = "Muitas tentativas. Aguarde alguns minutos e tente novamente.";
       } else {
-         // Caso authData.user seja null
-        console.error('❌ Login bem-sucedido mas sem dados de usuário.');
-        toast({
-          title: "Erro inesperado",
-          description: "Ocorreu um erro durante o login. Tente novamente.",
-          variant: "destructive"
-        });
+        errorMessage = signInError.message || "Ocorreu um erro durante o login.";
       }
-    } catch (error) {
-      console.error('💥 Erro inesperado:', error);
+      
       toast({
-        title: "Erro do sistema",
-        description: "Ocorreu um erro inesperado. Tente novamente.",
+        title: "Erro de autenticação",
+        description: errorMessage,
         variant: "destructive"
       });
-    } finally {
+      setIsLoading(false); // Stop loading if signIn itself fails
+    }
+    // If signIn call was successful (no direct error),
+    // isLoading remains true. useEffect will handle navigation/further errors
+    // based on useAuth state (authLoading, user, profile, authError).
+  };
+
+  useEffect(() => {
+    // This effect reacts to changes from useAuth state
+    if (authLoading) {
+      // If useAuth is busy, keep local loading true (if it was set by handleSubmit)
+      // or set it to true if not already.
+      if (!isLoading) setIsLoading(true);
+      return; // Wait for authLoading to be false
+    }
+
+    // At this point, authLoading is false.
+    // Reset local loading state if we haven't navigated.
+    
+    if (user && profile) {
+      if (['admin_hotel', 'admin_total'].includes(profile.role)) {
+        console.log('🎉 AdminHotelLogin: Login e perfil OK (via useAuth). Redirecionando para /admin/hotel...');
+        toast({
+          title: "Login realizado com sucesso!",
+          description: `Bem-vindo${profile.nome ? `, ${profile.nome}` : ''}!`,
+        });
+        navigate('/admin/hotel');
+        // setIsLoading(false) // Not strictly needed as component unmounts
+      } else {
+        console.error('❌ AdminHotelLogin: Role inválida (via useAuth):', profile.role, 'Requerido: admin_hotel ou admin_total');
+        toast({
+          title: "Acesso negado",
+          description: "Você não tem permissão para acessar este painel com esta conta.",
+          variant: "destructive"
+        });
+        setIsLoading(false); // Stop local loading, did not navigate
+        // Optionally, sign out the user if their role is definitively wrong for any admin access
+        // signOut(); 
+      }
+    } else if (user && !profile && authError) {
+      // Successfully authenticated by Supabase Auth, but profile fetch failed in useAuth
+      console.error('❌ AdminHotelLogin: Erro ao carregar perfil (via useAuth):', authError);
+      toast({
+        title: "Erro de Perfil",
+        description: `Não foi possível carregar os dados do seu perfil: ${authError}. Tente novamente ou contate o suporte.`,
+        variant: "destructive"
+      });
+      setIsLoading(false); // Stop local loading
+    } else if (!user && authError) {
+      // This means an auth error occurred that resulted in no user,
+      // possibly already handled by handleSubmit's direct error check.
+      // Or, if useAuth encountered an error post-signIn call that cleared the user.
+      console.warn('ℹ️ AdminHotelLogin: useEffect detectou authError sem usuário (pode ser redundante se handleSubmit já tratou):', authError);
+      // Avoid double-toasting if signInError already handled it.
+      // toast({
+      //   title: "Erro de Autenticação",
+      //   description: authError,
+      //   variant: "destructive",
+      // });
+      setIsLoading(false); // Stop local loading
+    } else {
+      // Default case: not loading, no user, no error (e.g., initial page load before login attempt, or after logout)
+      // Or conditions not met for navigation/specific error. Ensure isLoading is false.
       setIsLoading(false);
     }
-  };
+  }, [user, profile, authLoading, authError, navigate, isLoading]); // Added isLoading to deps
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-off-white to-stone-100 flex items-center justify-center p-4">
@@ -217,7 +213,7 @@ const AdminHotelLogin = () => {
           {process.env.NODE_ENV === 'development' && (
             <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
               <p className="text-xs text-yellow-800 font-mono">
-                Debug: Verifique o console do navegador para logs detalhados
+                Debug: Verifique o console do navegador para logs detalhados de useAuth e AdminHotelLogin.
               </p>
             </div>
           )}
