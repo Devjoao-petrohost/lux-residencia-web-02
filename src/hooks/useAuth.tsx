@@ -1,4 +1,5 @@
-import { useState, useEffect, createContext, useContext, useRef } from 'react';
+
+import { useState, useEffect, createContext, useContext, useCallback } from 'react';
 import { supabase, type PerfilUsuario } from '@/lib/supabase';
 import type { User } from '@supabase/supabase-js';
 
@@ -20,181 +21,120 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
 
-  const initialAuthEventReceived = useRef(false);
-  const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
-
-  const buscarPerfil = async (userId: string) => {
+  const buscarPerfil = useCallback(async (userId: string) => {
+    setLoading(true); // Iniciar loading ao buscar perfil
     console.log('🔍 buscarPerfil: Iniciando busca para userId:', userId);
-    
     try {
       const { data, error, status } = await supabase
         .from('profiles')
-        .select('id, nome, email, username, role, created_at') // Explicitly select columns
+        .select('id, nome, email, username, role, created_at') // Explicitamente select columns
         .eq('id', userId)
         .single();
 
       console.log('🔍 buscarPerfil: Resposta Supabase:', { userId, data, error, status });
 
-      if (error && status !== 406) {
+      if (error && status !== 406) { // 406 significa que .single() não encontrou registros, o que é ok
         console.error('❌ buscarPerfil: Erro ao buscar perfil:', error);
         setAuthError(`Erro ao carregar perfil: ${error.message}`);
         setProfile(null);
       } else if (!data) {
-        console.error('❌ buscarPerfil: Perfil não encontrado para userId:', userId, '(Data é null ou undefined)');
-        setAuthError('Perfil de usuário não encontrado.');
+        console.warn('⚠️ buscarPerfil: Perfil não encontrado para userId:', userId);
+        // Não definir authError aqui, pode ser um usuário novo sem perfil ainda criado pelo trigger.
+        // Se o RLS estiver correto, e o trigger funcionando, o perfil deve ser encontrado.
+        // Se o usuário acabou de se registrar, pode levar um momento para o trigger popular o perfil.
         setProfile(null);
       } else {
         console.log('✅ buscarPerfil: Perfil encontrado:', { id: data.id, role: data.role });
-        setProfile(data as PerfilUsuario); // Type assertion is okay if select matches PerfilUsuario
+        setProfile(data as PerfilUsuario);
         setAuthError(null);
       }
-    } catch (error: any) {
-      console.error('💥 buscarPerfil: Erro inesperado:', error);
-      setAuthError(`Erro inesperado ao carregar perfil: ${error?.message || 'Erro desconhecido'}`);
+    } catch (err: any) {
+      console.error('💥 buscarPerfil: Erro inesperado:', err);
+      setAuthError(`Erro inesperado ao carregar perfil: ${err?.message || 'Erro desconhecido'}`);
       setProfile(null);
     } finally {
       console.log('🏁 buscarPerfil: Finalizando loading do perfil');
-      setLoading(false);
+      setLoading(false); // Garantir que setLoading(false) seja chamado
     }
-  };
+  }, []);
 
   useEffect(() => {
-    console.log('🔄 AuthProvider: useEffect iniciado. Configurando verificação de sessão...');
     setLoading(true);
-    initialAuthEventReceived.current = false;
-
-    // Limpar timeout anterior, se houver (importante para StrictMode em dev)
-    if (timeoutIdRef.current) {
-      clearTimeout(timeoutIdRef.current);
-      console.log('🧹 AuthProvider: Timeout anterior (do ref) limpo no início do useEffect.');
-    }
-
-    timeoutIdRef.current = setTimeout(() => {
-      if (!initialAuthEventReceived.current) {
-        console.error('⏰ AuthProvider: Timeout! Nenhum evento de autenticação inicial (getSession/onAuthStateChange) recebido em 20 segundos.');
-        setAuthError('Timeout na verificação de autenticação inicial (20s)');
-        setLoading(false);
-      } else {
-        console.log('ℹ️ AuthProvider: Timeout callback executado, mas evento de autenticação já foi recebido. Nenhuma ação de erro.');
-      }
-    }, 20000); // Aumentado para 20 segundos
-
-    console.log(`🕒 AuthProvider: Timeout inicial de 20s configurado (ID: ${timeoutIdRef.current})`);
-
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      console.log('ℹ️ AuthProvider: getSession() callback executado.');
-      if (initialAuthEventReceived.current && timeoutIdRef.current) {
-         // Se onAuthStateChange já tratou, podemos ter um log para saber.
-         console.log('ℹ️ AuthProvider: getSession() - Evento de autenticação já processado por onAuthStateChange, mas limpando timeout por segurança.');
-      }
-      initialAuthEventReceived.current = true;
-      if (timeoutIdRef.current) {
-        clearTimeout(timeoutIdRef.current);
-        console.log(`✅ AuthProvider: Timeout inicial (ID: ${timeoutIdRef.current}) LIMPADO por getSession().`);
-        timeoutIdRef.current = null;
-      }
-      
-      if (error) {
-        console.error('❌ AuthProvider: Erro ao buscar sessão inicial via getSession():', error);
-        setAuthError(error.message);
-        setUser(null);
-        setProfile(null);
-        setLoading(false);
-        return;
-      }
-
-      console.log('🔍 AuthProvider: Sessão inicial via getSession():', session ? `User ID: ${session.user.id}` : 'Nenhuma sessão ativa.');
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        console.log('👤 AuthProvider: Usuário da sessão inicial (getSession) encontrado, buscando perfil...');
-        setLoading(true);
-        buscarPerfil(session.user.id);
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      const currentUser = session?.user;
+      setUser(currentUser ?? null);
+      if (currentUser) {
+        await buscarPerfil(currentUser.id);
       } else {
         setProfile(null);
-        setLoading(false);
+        setLoading(false); // Se não há sessão, não há perfil, então para de carregar
       }
-    }).catch((error) => {
-      console.error('💥 AuthProvider: Erro inesperado no CATCH de getSession():', error);
-      if (!initialAuthEventReceived.current && timeoutIdRef.current) { // Proteger contra setStates se já desmontado ou tratado
-          initialAuthEventReceived.current = true;
-          clearTimeout(timeoutIdRef.current);
-          console.log(`💥 AuthProvider: Timeout inicial (ID: ${timeoutIdRef.current}) LIMPADO no CATCH de getSession().`);
-          timeoutIdRef.current = null;
-      }
-      setAuthError('Erro inesperado na autenticação inicial (catch getSession)');
+    }).catch(error => {
+      console.error("Auth Provider: Erro no getSession", error);
+      setAuthError("Erro ao obter sessão: " + error.message);
       setUser(null);
       setProfile(null);
       setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log(`🔄 AuthProvider: onAuthStateChange evento: ${event}. Sessão:`, session ? `User ID: ${session.user.id}` : 'Nula');
+        console.log(`🔄 AuthProvider: onAuthStateChange evento: ${event}.`);
+        const currentUser = session?.user;
+        setUser(currentUser ?? null);
         
-        if (!initialAuthEventReceived.current && timeoutIdRef.current) {
-            console.log('ℹ️ AuthProvider: onAuthStateChange - Primeiro evento recebido.');
-        }
-        initialAuthEventReceived.current = true;
-        if (timeoutIdRef.current) {
-          clearTimeout(timeoutIdRef.current);
-          console.log(`✅ AuthProvider: Timeout inicial (ID: ${timeoutIdRef.current}) LIMPADO por onAuthStateChange (evento: ${event}).`);
-          timeoutIdRef.current = null;
-        }
-
-        setUser(session?.user ?? null);
-        setAuthError(null); 
-        
-        if (session?.user) {
+        if (currentUser) {
           console.log(`👤 AuthProvider: Usuário detectado via onAuthStateChange (evento: ${event}), buscando perfil...`);
-          setLoading(true);
-          await buscarPerfil(session.user.id);
+          await buscarPerfil(currentUser.id);
         } else {
           console.log(`🚫 AuthProvider: Usuário deslogado ou sessão nula via onAuthStateChange (evento: ${event}).`);
           setProfile(null);
-          setLoading(false);
+          setAuthError(null); // Limpa erro de autenticação ao deslogar
+          setLoading(false); // Se deslogou, para de carregar
         }
       }
     );
 
     return () => {
-      console.log('🧹 AuthProvider: useEffect cleanup. Cancelando inscrição e timeout restante (se houver).');
-      if (timeoutIdRef.current) {
-        clearTimeout(timeoutIdRef.current);
-        console.log(`🧹 AuthProvider: Timeout (ID: ${timeoutIdRef.current}) LIMPADO no cleanup.`);
-        timeoutIdRef.current = null;
-      }
-      subscription.unsubscribe();
+      authListener?.subscription.unsubscribe();
     };
-  }, []); // Mantém array de dependências vazio para rodar apenas no mount/unmount
+  }, [buscarPerfil]);
 
   const signIn = async (email: string, password: string) => {
     console.log('🚪 signIn: Tentando login com email:', email);
-    const { error } = await supabase.auth.signInWithPassword({
+    setLoading(true); // Iniciar loading ao tentar signIn
+    const { error, data } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
     if (error) {
       console.error('❌ signIn: Erro no login:', error);
-    } else {
-      console.log('✅ signIn: Login bem-sucedido (Supabase respondeu). Aguardando onAuthStateChange...');
+      setAuthError(error.message);
+      setLoading(false); // Parar loading se signIn falhar
+    } else if (!data.user) {
+      console.error('❌ signIn: Login bem-sucedido mas sem dados de usuário.');
+      setAuthError('Login bem-sucedido mas sem dados de usuário.');
+      setLoading(false);
     }
+    // Se signIn for bem-sucedido, onAuthStateChange cuidará de buscar o perfil e setar setLoading(false)
     return { error };
   };
 
   const signOut = async () => {
     console.log('🚪 signOut: Fazendo logout...');
-    await supabase.auth.signOut();
-    // onAuthStateChange cuidará de limpar user e profile e setLoading(false)
+    setLoading(true); // Iniciar loading ao tentar signOut
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('❌ signOut: Erro no logout:', error);
+      setAuthError(error.message);
+      setLoading(false); // Parar loading se signOut falhar
+    }
+    // onAuthStateChange cuidará de limpar user, profile e setar setLoading(false)
     console.log('🚪 signOut: Logout concluído (Supabase respondeu).');
   };
 
   const hasRole = (roles: string[]) => {
-    if (loading) {
-      console.log('🔒 hasRole: Verificação de role adiada, ainda carregando perfil...');
-      return false; // Ou poderia retornar um estado de "incerteza"
-    }
-    if (!profile) {
+    if (!profile) { // Não precisa checar loading aqui, pois o perfil é o que importa
       console.log('🔒 hasRole: Sem perfil, negando acesso para roles:', roles);
       return false;
     }
