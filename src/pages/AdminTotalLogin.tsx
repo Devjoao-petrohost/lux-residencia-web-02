@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
@@ -35,32 +34,14 @@ const AdminTotalLogin = () => {
     try {
       console.log('🔐 Iniciando login executivo com email:', credentials.email);
       
-      // Codificar a senha para lidar com caracteres especiais como '+'
-      const encodedPassword = encodeURIComponent(credentials.password);
-      console.log('🔐 Senha original tem caracteres especiais:', credentials.password !== encodedPassword);
-      
-      // Tentar primeiro com a senha original
-      console.log('🔐 Tentativa 1: Senha original');
-      let { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email: credentials.email.trim(),
-        password: credentials.password,
+        password: credentials.password, // Usando a senha original diretamente
       });
-      
-      // Se falhou e a senha tem caracteres especiais, tentar com codificação
-      if (authError && credentials.password !== encodedPassword) {
-        console.log('🔐 Tentativa 2: Senha codificada');
-        const result = await supabase.auth.signInWithPassword({
-          email: credentials.email.trim(),
-          password: encodedPassword,
-        });
-        authData = result.data;
-        authError = result.error;
-      }
       
       if (authError) {
         console.error('❌ Erro de autenticação executiva:', authError);
         
-        // Mensagens de erro mais específicas
         let errorMessage = "Email ou senha incorretos.";
         
         if (authError.message?.includes('Invalid login credentials')) {
@@ -76,12 +57,12 @@ const AdminTotalLogin = () => {
           description: errorMessage,
           variant: "destructive"
         });
+        setIsLoading(false); // Adicionado para garantir que o loading pare em caso de erro
         return;
       }
 
       console.log('✅ Login executivo bem-sucedido, verificando perfil...');
 
-      // Verificar o perfil após login bem-sucedido
       if (authData.user) {
         console.log('👤 Usuário executivo autenticado, ID:', authData.user.id);
         
@@ -97,22 +78,30 @@ const AdminTotalLogin = () => {
 
         if (profileError || !profileData) {
           console.error('❌ Perfil executivo não encontrado ou erro:', profileError);
-          await supabase.auth.signOut();
+          await supabase.auth.signOut(); // Deslogar se o perfil não for válido
           toast({
             title: "Acesso negado",
             description: "Você não tem permissão para acessar o painel executivo.",
             variant: "destructive"
           });
+          setIsLoading(false); // Adicionado
           return;
         }
 
-        // Sucesso total
         console.log('🎉 Login executivo e verificação concluídos com sucesso!');
         toast({
           title: "Login executivo realizado!",
           description: `Bem-vindo ao painel executivo${profileData.nome ? `, ${profileData.nome}` : ''}!`,
         });
         navigate('/admin/total');
+      } else {
+        // Caso authData.user seja null, o que não deveria acontecer se não houver authError
+        console.error('❌ Login bem-sucedido mas sem dados de usuário.');
+        toast({
+          title: "Erro inesperado",
+          description: "Ocorreu um erro durante o login. Tente novamente.",
+          variant: "destructive"
+        });
       }
     } catch (error) {
       console.error('💥 Erro inesperado no login executivo:', error);

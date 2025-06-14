@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
@@ -35,32 +34,14 @@ const AdminHotelLogin = () => {
     try {
       console.log('🔐 Iniciando login com email:', credentials.email);
       
-      // Codificar a senha para lidar com caracteres especiais como '+'
-      const encodedPassword = encodeURIComponent(credentials.password);
-      console.log('🔐 Senha original tem caracteres especiais:', credentials.password !== encodedPassword);
-      
-      // Tentar primeiro com a senha original
-      console.log('🔐 Tentativa 1: Senha original');
-      let { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email: credentials.email.trim(),
-        password: credentials.password,
+        password: credentials.password, // Usando a senha original diretamente
       });
-      
-      // Se falhou e a senha tem caracteres especiais, tentar com codificação
-      if (authError && credentials.password !== encodedPassword) {
-        console.log('🔐 Tentativa 2: Senha codificada');
-        const result = await supabase.auth.signInWithPassword({
-          email: credentials.email.trim(),
-          password: encodedPassword,
-        });
-        authData = result.data;
-        authError = result.error;
-      }
       
       if (authError) {
         console.error('❌ Erro de autenticação:', authError);
         
-        // Mensagens de erro mais específicas
         let errorMessage = "Email ou senha incorretos.";
         
         if (authError.message?.includes('Invalid login credentials')) {
@@ -76,12 +57,12 @@ const AdminHotelLogin = () => {
           description: errorMessage,
           variant: "destructive"
         });
+        setIsLoading(false); // Adicionado
         return;
       }
 
       console.log('✅ Login bem-sucedido, verificando perfil...');
       
-      // Verificar o perfil após login
       if (authData.user) {
         console.log('👤 Usuário autenticado, ID:', authData.user.id);
         
@@ -96,33 +77,42 @@ const AdminHotelLogin = () => {
 
         if (profileError) {
           console.error('❌ Erro ao buscar perfil:', profileError);
-          await supabase.auth.signOut();
+          await supabase.auth.signOut(); // Deslogar se houver erro no perfil
           toast({
             title: "Erro de perfil",
             description: "Não foi possível carregar seu perfil. Contate o administrador.",
             variant: "destructive"
           });
+          setIsLoading(false); // Adicionado
           return;
         }
 
         if (!profileData || !['admin_hotel', 'admin_total'].includes(profileData.role)) {
           console.error('❌ Role inválida:', profileData?.role);
-          await supabase.auth.signOut();
+          await supabase.auth.signOut(); // Deslogar se a role for inválida
           toast({
             title: "Acesso negado",
             description: "Você não tem permissão para acessar este painel.",
             variant: "destructive"
           });
+          setIsLoading(false); // Adicionado
           return;
         }
 
-        // Login e verificação OK
         console.log('🎉 Login e verificação concluídos com sucesso!');
         toast({
           title: "Login realizado com sucesso!",
           description: `Bem-vindo${profileData.nome ? `, ${profileData.nome}` : ''}!`,
         });
         navigate('/admin/hotel');
+      } else {
+         // Caso authData.user seja null
+        console.error('❌ Login bem-sucedido mas sem dados de usuário.');
+        toast({
+          title: "Erro inesperado",
+          description: "Ocorreu um erro durante o login. Tente novamente.",
+          variant: "destructive"
+        });
       }
     } catch (error) {
       console.error('💥 Erro inesperado:', error);
