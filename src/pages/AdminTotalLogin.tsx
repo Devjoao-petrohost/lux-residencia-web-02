@@ -1,16 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/hooks/useAuth'; // Alterado para usar o hook centralizado
 import { toast } from '@/hooks/use-toast';
 import { Shield, Mail, Lock, ArrowLeft, Loader } from 'lucide-react';
 
 const AdminTotalLogin = () => {
   const navigate = useNavigate();
-  const [credentials, setCredentials] = useState({
-    email: '',
-    password: ''
-  });
-  const [isLoading, setIsLoading] = useState(false);
+  const { 
+    user, 
+    profile, 
+    loading: authLoading, 
+    authError, 
+    signIn, 
+    signOut 
+  } = useAuth();
+
+  const [credentials, setCredentials] = useState({ email: '', password: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -29,91 +35,49 @@ const AdminTotalLogin = () => {
       return;
     }
 
-    setIsLoading(true);
-    
-    try {
-      console.log('🔐 Iniciando login executivo com email:', credentials.email);
-      
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email: credentials.email.trim(),
-        password: credentials.password, // Usando a senha original diretamente
-      });
-      
-      if (authError) {
-        console.error('❌ Erro de autenticação executiva:', authError);
-        
-        let errorMessage = "Email ou senha incorretos.";
-        
-        if (authError.message?.includes('Invalid login credentials')) {
-          errorMessage = "Credenciais inválidas. Verifique seu email e senha.";
-        } else if (authError.message?.includes('Email not confirmed')) {
-          errorMessage = "Email não confirmado. Verifique sua caixa de entrada.";
-        } else if (authError.message?.includes('Too many requests')) {
-          errorMessage = "Muitas tentativas. Aguarde alguns minutos e tente novamente.";
-        }
-        
-        toast({
-          title: "Erro de autenticação",
-          description: errorMessage,
-          variant: "destructive"
-        });
-        setIsLoading(false); // Adicionado para garantir que o loading pare em caso de erro
-        return;
-      }
+    setIsSubmitting(true);
+    // A função signIn do useAuth tratará o loading e os erros.
+    await signIn(credentials.email.trim(), credentials.password);
+    // O useEffect abaixo cuidará do resultado.
+  };
 
-      console.log('✅ Login executivo bem-sucedido, verificando perfil...');
+  useEffect(() => {
+    if (authLoading && isSubmitting) {
+      console.log('⏳ AdminTotalLogin (useEffect): Aguardando AuthContext processar o login...');
+      return;
+    }
 
-      if (authData.user) {
-        console.log('👤 Usuário executivo autenticado, ID:', authData.user.id);
-        
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('role, nome, email')
-          .eq('id', authData.user.id)
-          .eq('role', 'admin_total')
-          .single();
+    if (isSubmitting && !authLoading) {
+      setIsSubmitting(false);
+    }
 
-        console.log('📋 Dados do perfil executivo:', profileData);
-        console.log('📋 Erro do perfil executivo:', profileError);
-
-        if (profileError || !profileData) {
-          console.error('❌ Perfil executivo não encontrado ou erro:', profileError);
-          await supabase.auth.signOut(); // Deslogar se o perfil não for válido
+    if (!authLoading) {
+      if (user && profile) {
+        if (profile.role === 'admin_total') { // Apenas admin_total para este painel
+          console.log('🎉 AdminTotalLogin (useEffect): Login bem-sucedido e perfil válido. Redirecionando...');
           toast({
-            title: "Acesso negado",
-            description: "Você não tem permissão para acessar o painel executivo.",
+            title: "Login executivo realizado!",
+            description: `Bem-vindo ao painel executivo${profile.nome ? `, ${profile.nome}` : ''}!`,
+          });
+          navigate('/admin/total');
+        } else {
+          console.warn('🚫 AdminTotalLogin (useEffect): Usuário logado com role inadequada:', profile.role);
+          toast({
+            title: "Acesso Negado",
+            description: "Sua conta não tem permissão para acessar o painel executivo. Você será desconectado.",
             variant: "destructive"
           });
-          setIsLoading(false); // Adicionado
-          return;
+          signOut();
         }
-
-        console.log('🎉 Login executivo e verificação concluídos com sucesso!');
-        toast({
-          title: "Login executivo realizado!",
-          description: `Bem-vindo ao painel executivo${profileData.nome ? `, ${profileData.nome}` : ''}!`,
-        });
-        navigate('/admin/total');
-      } else {
-        // Caso authData.user seja null, o que não deveria acontecer se não houver authError
-        console.error('❌ Login bem-sucedido mas sem dados de usuário.');
-        toast({
-          title: "Erro inesperado",
-          description: "Ocorreu um erro durante o login. Tente novamente.",
-          variant: "destructive"
-        });
+      } else if (authError && !user) {
+         console.error('❌ AdminTotalLogin (useEffect): Erro de autenticação/perfil:', authError);
+         // Erros de login já são cobertos pelo useAuth.
       }
-    } catch (error) {
-      console.error('💥 Erro inesperado no login executivo:', error);
-      toast({
-        title: "Erro do sistema",
-        description: "Ocorreu um erro inesperado. Tente novamente.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [user, profile, authLoading, authError, navigate, signOut, isSubmitting]);
+  
+  const disableInputs = isSubmitting || authLoading;
+  const buttonText = isSubmitting ? "Autenticando..." : "Acessar Painel Executivo";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-charcoal via-stone-800 to-stone-900 flex items-center justify-center p-4">
@@ -150,7 +114,7 @@ const AdminTotalLogin = () => {
                   className="w-full pl-12 pr-4 py-3 border border-stone-grey rounded-lg font-sora focus:outline-none focus:ring-2 focus:ring-charcoal focus:border-transparent"
                   placeholder="admin@masperesidencial.ao"
                   required
-                  disabled={isLoading}
+                  disabled={disableInputs}
                 />
               </div>
             </div>
@@ -169,23 +133,23 @@ const AdminTotalLogin = () => {
                   className="w-full pl-12 pr-4 py-3 border border-stone-grey rounded-lg font-sora focus:outline-none focus:ring-2 focus:ring-charcoal focus:border-transparent"
                   placeholder="••••••••••"
                   required
-                  disabled={isLoading}
+                  disabled={disableInputs}
                 />
               </div>
             </div>
 
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={disableInputs}
               className="w-full bg-charcoal text-pure-white py-3 rounded-lg font-sora font-semibold hover:bg-stone-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
             >
-              {isLoading ? (
+              {isSubmitting ? (
                 <>
                   <Loader className="w-5 h-5 animate-spin" />
                   <span>Autenticando...</span>
                 </>
               ) : (
-                <span>Acessar Painel Executivo</span>
+                <span>{buttonText}</span>
               )}
             </button>
           </form>
@@ -205,8 +169,8 @@ const AdminTotalLogin = () => {
           {/* Debug Info em desenvolvimento */}
           {process.env.NODE_ENV === 'development' && (
             <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-xs text-yellow-800 font-mono">
-                Debug: Verifique o console do navegador para logs detalhados
+              <p className="text-xs text-yellow-800 font-mono break-all">
+                 Debug Info: isSubmitting: {isSubmitting.toString()}, authLoading (hook): {authLoading.toString()}, User: {user ? user.id : 'null'}, Profile: {profile ? profile.role : 'null'}, AuthError: {authError || 'null'}
               </p>
             </div>
           )}

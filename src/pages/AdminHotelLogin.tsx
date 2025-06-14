@@ -6,14 +6,17 @@ import { Hotel, Mail, Lock, ArrowLeft, Loader } from 'lucide-react';
 
 const AdminHotelLogin = () => {
   const navigate = useNavigate();
-  const { user, profile, loading: authLoading, authError, signIn, signOut } = useAuth();
+  const { 
+    user, 
+    profile, 
+    loading: authLoading, // Renomeado para clareza (loading do AuthContext)
+    authError, 
+    signIn, 
+    signOut 
+  } = useAuth();
 
-  const [credentials, setCredentials] = useState({
-    email: '',
-    password: ''
-  });
-  const [isLoading, setIsLoading] = useState(false); // Local loading state for the submit button
-  const [isAttemptingLogin, setIsAttemptingLogin] = useState(false); // True when user submits the form
+  const [credentials, setCredentials] = useState({ email: '', password: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false); // Estado local para o processo de submissão do formulário
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -32,123 +35,84 @@ const AdminHotelLogin = () => {
       return;
     }
 
-    setIsLoading(true);
-    setIsAttemptingLogin(true); // Signal that a login attempt has started
+    setIsSubmitting(true); // Inicia o processo de submissão
     
+    // A função signIn do useAuth agora gerencia seu próprio loading e erros.
+    // O resultado final (user, profile, authError) será refletido no AuthContext.
     const { error: signInError } = await signIn(credentials.email.trim(), credentials.password);
     
-    if (signInError) {
-      console.error('❌ AdminHotelLogin: Erro direto do signIn no handleSubmit:', signInError);
-      
-      let errorMessage = "Email ou senha incorretos.";
-      if (signInError.message?.includes('Invalid login credentials')) {
-        errorMessage = "Credenciais inválidas. Verifique seu email e senha.";
-      } else if (signInError.message?.includes('Email not confirmed')) {
-        errorMessage = "Email não confirmado. Verifique sua caixa de entrada.";
-      } else if (signInError.message?.includes('Too many requests')) {
-        errorMessage = "Muitas tentativas. Aguarde alguns minutos e tente novamente.";
-      } else {
-        errorMessage = signInError.message || "Ocorreu um erro durante o login.";
-      }
-      
-      toast({
-        title: "Erro de autenticação",
-        description: errorMessage,
-        variant: "destructive"
-      });
-      setIsLoading(false);
-      setIsAttemptingLogin(false); // Reset state because the attempt failed directly
-      return; // Stop further processing by useEffect for this specific error
+    // Se signIn retorna um erro direto (ex: falha na chamada da API, não erro de credenciais),
+    // o authError no context pode não ter sido setado ainda ou pode ser diferente.
+    // O useAuth já lida com setar authError para erros de credenciais.
+    // Aqui, só precisamos garantir que setIsSubmitting seja resetado se signInError ocorrer
+    // e não houver transição para authLoading.
+    if (signInError && !authLoading) {
+        // Erro de login (ex: credenciais inválidas) já foi tratado pelo toast no useAuth (ou será pelo useEffect)
+        // Aqui só precisamos garantir que isSubmitting seja parado.
+        // Se o erro não foi de credenciais mas sim um erro de rede/API no signIn,
+        // o authError pode não estar atualizado ainda. O useEffect abaixo cuidará disso.
+        console.error('❌ AdminHotelLogin: Erro no handleSubmit direto do signIn:', signInError.message);
+        // Não é mais necessário um toast aqui, pois o useEffect vai lidar com authError.
     }
-    // If signIn itself doesn't error, useAuth will update its state (user, profile, authError for profile fetch)
-    // and the useEffect below will handle the outcome.
+    // Se signIn não teve erro direto, o fluxo continua e o useEffect abaixo
+    // irá reagir às mudanças em user, profile, authLoading, authError.
+    // setIsSubmitting será resetado pelo useEffect quando authLoading for false.
   };
 
   useEffect(() => {
-    // This effect handles:
-    // 1. Initial redirect if user is ALREADY logged in with a valid role (and NOT attempting a new login).
-    // 2. The outcome of a user-initiated login attempt (when isAttemptingLogin is true).
+    // Este useEffect lida com o resultado de uma tentativa de login OU
+    // com o estado inicial (se o usuário já estiver logado).
 
-    if (!isAttemptingLogin) {
-      // Scenario 1: Page loaded, no login attempt initiated by the user YET.
-      // Check if user is already authenticated from a previous session via useAuth.
-      if (!authLoading && user && profile) { // User is authenticated and profile is loaded
+    // Se o AuthContext ainda está carregando (ex: verificando sessão inicial ou processando signIn),
+    // e o formulário FOI submetido, mantemos isSubmitting true.
+    if (authLoading && isSubmitting) {
+      console.log('⏳ AdminHotelLogin (useEffect): Aguardando AuthContext processar o login...');
+      return; // Mantém isSubmitting, o botão mostrará "Verificando..."
+    }
+
+    // Se o formulário estava em submissão e o AuthContext parou de carregar,
+    // resetamos isSubmitting. O resultado do login será tratado abaixo.
+    if (isSubmitting && !authLoading) {
+      setIsSubmitting(false);
+    }
+
+    // Após o carregamento do AuthContext (authLoading === false):
+    if (!authLoading) {
+      if (user && profile) { // Usuário logado E perfil carregado
         if (['admin_hotel', 'admin_total'].includes(profile.role)) {
-          console.log('🎉 AdminHotelLogin: Usuário já logado e com perfil válido na CHEGADA. Redirecionando...');
+          console.log('🎉 AdminHotelLogin (useEffect): Login bem-sucedido e perfil válido. Redirecionando...');
+          toast({
+            title: "Login realizado com sucesso!",
+            description: `Bem-vindo${profile.nome ? `, ${profile.nome}` : ''}!`,
+          });
           navigate('/admin/hotel');
+        } else {
+          // Usuário logado, perfil carregado, MAS role errada para este painel.
+          console.warn('🚫 AdminHotelLogin (useEffect): Usuário logado com role inadequada:', profile.role);
+          toast({
+            title: "Acesso Negado",
+            description: "Sua conta não tem permissão para acessar este painel. Você será desconectado.",
+            variant: "destructive"
+          });
+          signOut(); // Desloga o usuário. O onAuthStateChange limpará o estado.
         }
-        // If user is logged in but with wrong role, or no profile found for some reason,
-        // do nothing here. The form remains available for a new login attempt.
-        // The login form should still be usable.
+      } else if (authError && !user) { 
+        // Se houve um authError e NÃO HÁ usuário (ex: credenciais inválidas, erro ao buscar perfil que levou a signOut)
+        // Esta condição é importante para mostrar erros de login que o useAuth capturou.
+        console.error('❌ AdminHotelLogin (useEffect): Erro de autenticação/perfil:', authError);
+        // O toast sobre authError já é dado pelo useAuth/ProtectedRoute, mas podemos reforçar se necessário.
+        // No entanto, para evitar toasts duplicados, podemos confiar que useAuth/ProtectedRoute já informou.
+        // Se o erro foi `Perfil de usuário não encontrado...`, já terá sido mostrado.
+        // Se foi de credenciais, useAuth já setou.
+        // Apenas nos certificamos que o estado de submissão está falso.
       }
-      // If authLoading is true, or no user/profile, just wait. Form inputs might be disabled.
-      // Ensure local isLoading is false if authLoading finishes and no attempt is active.
-      if (!authLoading && isLoading) {
-        setIsLoading(false);
-      }
-      return; // IMPORTANT: Exit early if not actively attempting login.
+      // Se !user && !authError: usuário simplesmente não está logado (estado normal da página de login).
+      // Se user && !profile && authError: ProtectedRoute ou useAuth já deve ter lidado (toast + signOut).
     }
+  }, [user, profile, authLoading, authError, navigate, signOut, isSubmitting]);
 
-    // Scenario 2: A login attempt IS active (isAttemptingLogin is true).
-    // Now, we process the results from useAuth based on the attempt.
-
-    if (authLoading) {
-      // Still waiting for useAuth to process the signIn and/or profile fetch.
-      // The button's isLoading state (local) is already true from handleSubmit.
-      return;
-    }
-
-    // authLoading is false, and a login attempt was made. Evaluate the result:
-    if (user && profile) { // Attempt successful, user and profile are available
-      if (['admin_hotel', 'admin_total'].includes(profile.role)) {
-        console.log('🎉 AdminHotelLogin: Login e perfil OK (APÓS TENTATIVA). Redirecionando...');
-        toast({
-          title: "Login realizado com sucesso!",
-          description: `Bem-vindo${profile.nome ? `, ${profile.nome}` : ''}!`,
-        });
-        navigate('/admin/hotel');
-        // Component will unmount, no need to explicitly reset isLoading/isAttemptingLogin here.
-      } else {
-        // User authenticated, profile loaded, but role is invalid for this panel
-        console.error('❌ AdminHotelLogin: Role inválida (APÓS TENTATIVA):', profile.role, 'Requerido: admin_hotel ou admin_total');
-        toast({
-          title: "Acesso negado",
-          description: "Você não tem permissão para acessar este painel com esta conta.",
-          variant: "destructive"
-        });
-        signOut(); // Sign out the user with the wrong role. This will trigger onAuthStateChange.
-        setIsLoading(false);
-        setIsAttemptingLogin(false);
-      }
-    } else if (authError) { // An error occurred during auth process (e.g., profile fetch error after signIn was ok)
-      console.error('❌ AdminHotelLogin: Erro de autenticação/perfil (APÓS TENTATIVA, via useAuth context):', authError);
-      toast({
-        title: "Erro de autenticação",
-        // authError from useAuth context is string | null, it IS the message.
-        description: authError || "Ocorreu um erro desconhecido durante o processo de autenticação.",
-        variant: "destructive"
-      });
-      setIsLoading(false);
-      setIsAttemptingLogin(false);
-    } else if (!user && !authError) {
-      // This case: signIn call might have returned no error from Supabase, but no user object.
-      // Or, profile fetch was silently unsuccessful without setting authError from useAuth.
-      // This implies credentials might be wrong but didn't cause an immediate Supabase client error.
-      console.log('🚫 AdminHotelLogin: Tentativa de login finalizada sem usuário e sem erro explícito (APÓS TENTATIVA).');
-      toast({
-        title: "Falha no Login",
-        description: "Verifique suas credenciais ou tente novamente. Se o problema persistir, contate o suporte.",
-        variant: "destructive"
-      });
-      setIsLoading(false);
-      setIsAttemptingLogin(false);
-    } else {
-      // Fallback for any other unexpected state after a login attempt.
-      console.warn('ℹ️ AdminHotelLogin: useEffect (APÓS TENTATIVA) chegou a um estado inesperado.');
-      setIsLoading(false);
-      setIsAttemptingLogin(false);
-    }
-  }, [user, profile, authLoading, authError, navigate, isAttemptingLogin, signOut, isLoading]);
+  const disableInputs = isSubmitting || authLoading; // Desabilitar inputs durante submissão ou carregamento global de auth
+  const buttonText = isSubmitting ? "Verificando..." : "Entrar no Painel";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-off-white to-stone-100 flex items-center justify-center p-4">
@@ -183,7 +147,7 @@ const AdminHotelLogin = () => {
                   className="w-full pl-12 pr-4 py-3 border border-stone-grey rounded-lg font-sora focus:outline-none focus:ring-2 focus:ring-charcoal focus:border-transparent"
                   placeholder="seu.email@masperesidencial.ao"
                   required
-                  disabled={isLoading || (authLoading && !isAttemptingLogin)}
+                  disabled={disableInputs}
                 />
               </div>
             </div>
@@ -202,17 +166,17 @@ const AdminHotelLogin = () => {
                   className="w-full pl-12 pr-4 py-3 border border-stone-grey rounded-lg font-sora focus:outline-none focus:ring-2 focus:ring-charcoal focus:border-transparent"
                   placeholder="••••••••"
                   required
-                  disabled={isLoading || (authLoading && !isAttemptingLogin)}
+                  disabled={disableInputs}
                 />
               </div>
             </div>
 
             <button
               type="submit"
-              disabled={isLoading || (authLoading && !isAttemptingLogin)}
+              disabled={disableInputs}
               className="w-full bg-charcoal text-pure-white py-3 rounded-lg font-sora font-semibold hover:bg-stone-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
             >
-              {isLoading || (authLoading && isAttemptingLogin) ? ( // Show loader if local isLoading OR (authLoading AND an attempt is active)
+              {isSubmitting ? (
                 <>
                   <Loader className="w-5 h-5 animate-spin" />
                   <span>Verificando...</span>
@@ -237,8 +201,8 @@ const AdminHotelLogin = () => {
 
           {process.env.NODE_ENV === 'development' && (
             <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-xs text-yellow-800 font-mono">
-                Debug: isAttemptingLogin: {isAttemptingLogin.toString()}, authLoading (hook): {authLoading.toString()}, isLoading (button): {isLoading.toString()}, User: {user ? user.id : 'null'}, Profile: {profile ? profile.role : 'null'}, AuthError: {authError || 'null'}
+              <p className="text-xs text-yellow-800 font-mono break-all">
+                Debug Info: isSubmitting: {isSubmitting.toString()}, authLoading (hook): {authLoading.toString()}, User: {user ? user.id : 'null'}, Profile: {profile ? profile.role : 'null'}, AuthError: {authError || 'null'}
               </p>
             </div>
           )}
