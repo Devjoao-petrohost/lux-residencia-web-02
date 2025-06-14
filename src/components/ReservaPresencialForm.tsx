@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Calendar, User, CreditCard, Printer, Eye, X, Check, AlertCircle } from 'lucide-react';
 import { useQuartosHotel } from '@/hooks/useQuartosHotel';
@@ -156,7 +155,7 @@ export function ReservaPresencialForm({ onClose, onSuccess }: ReservaPresencialF
     try {
       const valorTotal = calcularValorTotal();
       
-      const novaReserva: Omit<ReservaHotel, 'id' | 'created_at'> = {
+      const novaReserva: Omit<ReservaHotel, 'id' | 'created_at' | 'updated_at'> = {
         quarto_id: selectedQuarto.id,
         nome_hospede: dadosCliente.nome_hospede,
         documento_hospede: dadosCliente.documento_hospede,
