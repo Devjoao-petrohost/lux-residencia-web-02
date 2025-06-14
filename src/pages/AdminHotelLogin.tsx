@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -89,8 +90,8 @@ const AdminHotelLogin = () => {
           description: `Bem-vindo${profile.nome ? `, ${profile.nome}` : ''}!`,
         });
         navigate('/admin/hotel');
-        setIsLoading(false);
-        setIsAttemptingLogin(false);
+        // No need to set isLoading or isAttemptingLogin to false here, as navigation will unmount.
+        // If navigation fails or component doesn't unmount, these might need to be reset.
       } else {
         console.error('❌ AdminHotelLogin: Role inválida (via useAuth):', profile.role, 'Requerido: admin_hotel ou admin_total');
         toast({
@@ -98,7 +99,9 @@ const AdminHotelLogin = () => {
           description: "Você não tem permissão para acessar este painel com esta conta.",
           variant: "destructive"
         });
-        signOut();
+        signOut(); // This will trigger auth state changes, leading to potential re-evaluation or new authError.
+        setIsLoading(false);
+        setIsAttemptingLogin(false);
       }
     } else if (user && !profile && authError) {
       console.error('❌ AdminHotelLogin: Erro ao carregar perfil (via useAuth):', authError);
@@ -107,33 +110,46 @@ const AdminHotelLogin = () => {
         description: `Não foi possível carregar os dados do seu perfil: ${authError}. Tente novamente ou contate o suporte.`,
         variant: "destructive"
       });
+      setIsLoading(false);
+      setIsAttemptingLogin(false);
     } else if (!user && authError) {
       console.warn('ℹ️ AdminHotelLogin: useEffect detectou authError sem usuário (pode ser redundante se handleSubmit já tratou):', authError);
-      if (!toast.isActive(`direct-signin-error-${credentials.email}`)) {
-        toast({
-          title: "Falha na Autenticação",
-          description: authError,
-          variant: "destructive"
-        });
-      }
+      // Removed problematic toast.isActive check
+      toast({
+        title: "Falha na Autenticação",
+        description: authError.message || "Ocorreu um erro desconhecido.", // Ensure authError always provides a message
+        variant: "destructive"
+      });
       setIsLoading(false);
       setIsAttemptingLogin(false);
     } else if (!user && !authError) {
+      // This case might be hit if signIn completes without error but doesn't yield a user (e.g. incorrect credentials but not an API error)
+      // Or if auth flow concludes without user and without explicit useAuth error
       console.log('🚫 AdminHotelLogin: Tentativa de login finalizada sem usuário e sem erro explícito do useAuth.');
-      if (!toast.isActive(`direct-signin-error-${credentials.email}`)) {
-        toast({
-          title: "Falha no Login",
-          description: "Verifique suas credenciais ou tente novamente.",
-          variant: "destructive"
-        });
-      }
+      // Removed problematic toast.isActive check
+      toast({
+        title: "Falha no Login",
+        description: "Verifique suas credenciais ou tente novamente.",
+        variant: "destructive"
+      });
+      setIsLoading(false);
+      setIsAttemptingLogin(false);
+    } else {
+      // Fallback to ensure loading states are reset if no other condition matched
+      // but an attempt was made.
       setIsLoading(false);
       setIsAttemptingLogin(false);
     }
 
-    setIsLoading(false);
-    setIsAttemptingLogin(false);
-  }, [user, profile, authLoading, authError, navigate, isAttemptingLogin, signOut, credentials.email, isLoading]);
+    // Redundant if already set in specific branches, but acts as a safety net.
+    // Consider if this should be here or if all branches handle it correctly.
+    // For now, to ensure states are reset if a login attempt was made and didn't navigate.
+    if (isAttemptingLogin && !user) {
+        setIsLoading(false);
+        setIsAttemptingLogin(false);
+    }
+
+  }, [user, profile, authLoading, authError, navigate, isAttemptingLogin, signOut, isLoading]); // Removed credentials.email as it's not directly used for conditions here
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-off-white to-stone-100 flex items-center justify-center p-4">
@@ -244,3 +260,4 @@ const AdminHotelLogin = () => {
 };
 
 export default AdminHotelLogin;
+
