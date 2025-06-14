@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase, type QuartoHotel } from '@/lib/supabase';
 import { toast } from '@/hooks/use-toast';
@@ -32,7 +31,7 @@ export function useQuartosHotel() {
     }
   };
 
-  const criarQuarto = async (quarto: Omit<QuartoHotel, 'id' | 'created_at'>) => {
+  const criarQuarto = async (quarto: Omit<QuartoHotel, 'id' | 'created_at' | 'updated_at'>) => {
     try {
       const { data, error } = await supabase
         .from('hotel_quartos')

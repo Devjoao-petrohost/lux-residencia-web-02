@@ -6,7 +6,7 @@ import type { QuartoHotel } from '@/lib/supabase';
 
 interface QuartoFormProps {
   quarto?: QuartoHotel;
-  onSave: (quarto: Omit<QuartoHotel, 'id' | 'created_at'>) => Promise<boolean>;
+  onSave: (quarto: Omit<QuartoHotel, 'id' | 'created_at' | 'updated_at'>) => Promise<boolean>;
   onCancel: () => void;
   isOpen: boolean;
 }

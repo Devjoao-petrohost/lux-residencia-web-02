@@ -9,6 +9,110 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      hotel_quartos: {
+        Row: {
+          capacidade: number
+          created_at: string
+          descricao: string | null
+          foto_url: string | null
+          id: string
+          nome: string
+          numero_quarto: string
+          preco_noite: number
+          servicos: string[] | null
+          status: Database["public"]["Enums"]["quarto_status"]
+          updated_at: string
+        }
+        Insert: {
+          capacidade: number
+          created_at?: string
+          descricao?: string | null
+          foto_url?: string | null
+          id?: string
+          nome: string
+          numero_quarto: string
+          preco_noite: number
+          servicos?: string[] | null
+          status?: Database["public"]["Enums"]["quarto_status"]
+          updated_at?: string
+        }
+        Update: {
+          capacidade?: number
+          created_at?: string
+          descricao?: string | null
+          foto_url?: string | null
+          id?: string
+          nome?: string
+          numero_quarto?: string
+          preco_noite?: number
+          servicos?: string[] | null
+          status?: Database["public"]["Enums"]["quarto_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      hotel_reservas: {
+        Row: {
+          created_at: string
+          data_checkin: string
+          data_checkout: string
+          documento_hospede: string | null
+          email_hospede: string | null
+          id: string
+          metodo_pagamento: string | null
+          nome_hospede: string
+          numero_pessoas: number
+          observacoes: string | null
+          quarto_id: string
+          status: Database["public"]["Enums"]["reserva_status"]
+          telefone_hospede: string | null
+          updated_at: string
+          valor_total: number
+        }
+        Insert: {
+          created_at?: string
+          data_checkin: string
+          data_checkout: string
+          documento_hospede?: string | null
+          email_hospede?: string | null
+          id?: string
+          metodo_pagamento?: string | null
+          nome_hospede: string
+          numero_pessoas: number
+          observacoes?: string | null
+          quarto_id: string
+          status?: Database["public"]["Enums"]["reserva_status"]
+          telefone_hospede?: string | null
+          updated_at?: string
+          valor_total: number
+        }
+        Update: {
+          created_at?: string
+          data_checkin?: string
+          data_checkout?: string
+          documento_hospede?: string | null
+          email_hospede?: string | null
+          id?: string
+          metodo_pagamento?: string | null
+          nome_hospede?: string
+          numero_pessoas?: number
+          observacoes?: string | null
+          quarto_id?: string
+          status?: Database["public"]["Enums"]["reserva_status"]
+          telefone_hospede?: string | null
+          updated_at?: string
+          valor_total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hotel_reservas_quarto_id_fkey"
+            columns: ["quarto_id"]
+            isOneToOne: false
+            referencedRelation: "hotel_quartos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -47,6 +151,8 @@ export type Database = {
       }
     }
     Enums: {
+      quarto_status: "disponivel" | "ocupado" | "manutencao"
+      reserva_status: "confirmada" | "pendente" | "cancelada" | "concluida"
       user_role: "admin_restaurante" | "admin_hotel" | "admin_total"
     }
     CompositeTypes: {
@@ -163,6 +269,8 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      quarto_status: ["disponivel", "ocupado", "manutencao"],
+      reserva_status: ["confirmada", "pendente", "cancelada", "concluida"],
       user_role: ["admin_restaurante", "admin_hotel", "admin_total"],
     },
   },

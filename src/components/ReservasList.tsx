@@ -1,9 +1,8 @@
-
 import { useState } from 'react';
 import { Calendar, User, Phone, Mail, CreditCard, Filter, Search, Eye, Edit, Trash2 } from 'lucide-react';
 import { useReservasHotel } from '@/hooks/useReservasHotel';
 import { toast } from '@/hooks/use-toast';
-import type { ReservaHotel } from '@/lib/supabase';
+import type { ReservaHotelComQuarto } from '@/lib/supabase';
 
 interface ReservasListProps {
   quartoId?: string;
@@ -15,7 +14,7 @@ export function ReservasList({ quartoId }: ReservasListProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<'date' | 'value' | 'name'>('date');
 
-  const reservasFiltradas = reservas.filter(reserva => {
+  const reservasFiltradas = (reservas as ReservaHotelComQuarto[]).filter(reserva => {
     const matchQuarto = !quartoId || reserva.quarto_id === quartoId;
     const matchStatus = selectedStatus === 'todas' || reserva.status === selectedStatus;
     const matchSearch = !searchTerm || 
@@ -186,6 +185,11 @@ export function ReservasList({ quartoId }: ReservasListProps) {
                       </h4>
                       <p className="font-sora text-sm text-stone-grey">
                         Reserva #{reserva.id.slice(0, 8).toUpperCase()}
+                        {reserva.hotel_quartos && (
+                          <span className="ml-2 font-medium">
+                            - Quarto {reserva.hotel_quartos.numero_quarto} ({reserva.hotel_quartos.nome})
+                          </span>
+                        )}
                       </p>
                     </div>
                   </div>

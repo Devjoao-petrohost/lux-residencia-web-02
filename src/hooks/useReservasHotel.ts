@@ -1,10 +1,10 @@
 
 import { useState, useEffect } from 'react';
-import { supabase, type ReservaHotel } from '@/lib/supabase';
+import { supabase, type ReservaHotel, type ReservaHotelComQuarto } from '@/lib/supabase';
 import { toast } from '@/hooks/use-toast';
 
 export function useReservasHotel() {
-  const [reservas, setReservas] = useState<ReservaHotel[]>([]);
+  const [reservas, setReservas] = useState<ReservaHotelComQuarto[]>([]);
   const [loading, setLoading] = useState(true);
 
   const carregarReservas = async () => {
@@ -29,7 +29,7 @@ export function useReservasHotel() {
           variant: "destructive"
         });
       } else {
-        setReservas(data || []);
+        setReservas((data as ReservaHotelComQuarto[]) || []);
       }
     } catch (error) {
       console.error('Erro ao carregar reservas:', error);
@@ -38,7 +38,7 @@ export function useReservasHotel() {
     }
   };
 
-  const criarReserva = async (reserva: Omit<ReservaHotel, 'id' | 'created_at'>) => {
+  const criarReserva = async (reserva: Omit<ReservaHotel, 'id' | 'created_at' | 'updated_at'>) => {
     try {
       const { data, error } = await supabase
         .from('hotel_reservas')

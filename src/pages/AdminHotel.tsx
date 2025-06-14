@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { AdminLayout } from '@/components/AdminLayout';
@@ -52,7 +51,7 @@ const AdminHotelContent = () => {
     setIsFormOpen(true);
   };
 
-  const handleSalvarQuarto = async (quartoData: Omit<QuartoHotel, 'id' | 'created_at'>) => {
+  const handleSalvarQuarto = async (quartoData: Omit<QuartoHotel, 'id' | 'created_at' | 'updated_at'>) => {
     if (selectedQuarto) {
       return await atualizarQuarto(selectedQuarto.id, quartoData);
     } else {

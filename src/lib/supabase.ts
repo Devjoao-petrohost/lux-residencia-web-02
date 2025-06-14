@@ -17,6 +17,7 @@ export interface QuartoHotel {
   status: 'disponivel' | 'ocupado' | 'manutencao';
   servicos: string[];
   created_at: string;
+  updated_at: string;
 }
 
 export interface ReservaHotel {
@@ -34,7 +35,15 @@ export interface ReservaHotel {
   metodo_pagamento: string;
   observacoes?: string;
   created_at: string;
+  updated_at: string;
 }
+
+export type ReservaHotelComQuarto = ReservaHotel & {
+  hotel_quartos: {
+    numero_quarto: string;
+    nome: string;
+  } | null;
+};
 
 export interface PerfilUsuario {
   id: string;
