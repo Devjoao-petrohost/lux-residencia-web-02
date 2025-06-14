@@ -1,4 +1,3 @@
-
 import { useState, useEffect, createContext, useContext, useRef } from 'react';
 import { supabase, type PerfilUsuario } from '@/lib/supabase';
 import type { User } from '@supabase/supabase-js';
@@ -26,18 +25,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const buscarPerfil = async (userId: string) => {
     console.log('🔍 buscarPerfil: Iniciando busca para userId:', userId);
-    // setLoading(true) é chamado antes desta função ser invocada se um usuário for detectado.
     
     try {
       const { data, error, status } = await supabase
         .from('profiles')
-        .select('*')
+        .select('id, nome, email, username, role, created_at') // Explicitly select columns
         .eq('id', userId)
         .single();
 
       console.log('🔍 buscarPerfil: Resposta Supabase:', { userId, data, error, status });
 
-      if (error && status !== 406) { // 406 means single() found 0 or multiple rows, not necessarily a DB error.
+      if (error && status !== 406) {
         console.error('❌ buscarPerfil: Erro ao buscar perfil:', error);
         setAuthError(`Erro ao carregar perfil: ${error.message}`);
         setProfile(null);
@@ -47,7 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setProfile(null);
       } else {
         console.log('✅ buscarPerfil: Perfil encontrado:', { id: data.id, role: data.role });
-        setProfile(data as PerfilUsuario);
+        setProfile(data as PerfilUsuario); // Type assertion is okay if select matches PerfilUsuario
         setAuthError(null);
       }
     } catch (error: any) {
@@ -113,7 +111,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setLoading(true);
         buscarPerfil(session.user.id);
       } else {
-        setProfile(null); // Garante que o perfil seja limpo se não houver sessão
+        setProfile(null);
         setLoading(false);
       }
     }).catch((error) => {
