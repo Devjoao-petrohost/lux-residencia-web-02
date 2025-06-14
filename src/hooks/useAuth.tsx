@@ -1,4 +1,3 @@
-
 import { useState, useEffect, createContext, useContext } from 'react';
 import { supabase, type PerfilUsuario } from '@/lib/supabase';
 import type { User } from '@supabase/supabase-js';
@@ -24,55 +23,56 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     console.log('🔄 AuthProvider: Iniciando verificação de sessão...');
     
-    // Timeout para evitar loading infinito
     const timeoutId = setTimeout(() => {
       if (loading) {
-        console.error('⏰ AuthProvider: Timeout na verificação de sessão (10s)');
-        setAuthError('Timeout na verificação de autenticação');
+        console.error('⏰ AuthProvider: Timeout na verificação de sessão inicial (10s)');
+        setAuthError('Timeout na verificação de autenticação inicial');
         setLoading(false);
       }
     }, 10000); // 10 segundos timeout
 
-    // Buscar sessão inicial
     supabase.auth.getSession().then(({ data: { session }, error }) => {
       clearTimeout(timeoutId);
       
       if (error) {
-        console.error('❌ AuthProvider: Erro ao buscar sessão:', error);
+        console.error('❌ AuthProvider: Erro ao buscar sessão inicial:', error);
         setAuthError(error.message);
         setLoading(false);
         return;
       }
 
-      console.log('🔍 AuthProvider: Sessão encontrada:', !!session?.user);
+      console.log('🔍 AuthProvider: Sessão inicial encontrada:', !!session?.user);
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        console.log('👤 AuthProvider: Usuário encontrado, buscando perfil...');
+        console.log('👤 AuthProvider: Usuário da sessão inicial encontrado, buscando perfil...');
+        // setLoading(true) é desnecessário aqui pois já é true por padrão
         buscarPerfil(session.user.id);
       } else {
-        console.log('🚫 AuthProvider: Nenhum usuário logado');
+        console.log('🚫 AuthProvider: Nenhum usuário logado na sessão inicial');
         setLoading(false);
       }
     }).catch((error) => {
       clearTimeout(timeoutId);
-      console.error('💥 AuthProvider: Erro inesperado ao buscar sessão:', error);
-      setAuthError('Erro inesperado na autenticação');
+      console.error('💥 AuthProvider: Erro inesperado ao buscar sessão inicial:', error);
+      setAuthError('Erro inesperado na autenticação inicial');
       setLoading(false);
     });
 
-    // Escutar mudanças de autenticação
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('🔄 AuthProvider: Mudança de estado:', event);
+        // Limpar o timeout inicial aqui, pois onAuthStateChange fornece um estado definitivo.
+        clearTimeout(timeoutId); 
+        console.log('🔄 AuthProvider: Mudança de estado de autenticação:', event, session);
         setUser(session?.user ?? null);
-        setAuthError(null);
+        setAuthError(null); // Limpar erros anteriores ao mudar o estado
         
         if (session?.user) {
-          console.log('👤 AuthProvider: Novo usuário, buscando perfil...');
+          console.log('👤 AuthProvider: Usuário detectado via onAuthStateChange, buscando perfil...');
+          setLoading(true); // Indicar que o carregamento do perfil começou
           await buscarPerfil(session.user.id);
         } else {
-          console.log('🚫 AuthProvider: Usuário deslogado');
+          console.log('🚫 AuthProvider: Usuário deslogado via onAuthStateChange');
           setProfile(null);
           setLoading(false);
         }
@@ -87,6 +87,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const buscarPerfil = async (userId: string) => {
     console.log('🔍 buscarPerfil: Iniciando busca para userId:', userId);
+    // Não é necessário setLoading(true) aqui se já foi setado antes da chamada
     
     try {
       const { data, error } = await supabase
@@ -100,20 +101,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setAuthError(`Erro ao carregar perfil: ${error.message}`);
         setProfile(null);
       } else if (!data) {
-        console.error('❌ buscarPerfil: Perfil não encontrado');
+        console.error('❌ buscarPerfil: Perfil não encontrado para userId:', userId);
         setAuthError('Perfil de usuário não encontrado');
         setProfile(null);
       } else {
         console.log('✅ buscarPerfil: Perfil encontrado:', { id: data.id, role: data.role });
-        setProfile(data);
-        setAuthError(null);
+        setProfile(data as PerfilUsuario); // Cast para PerfilUsuario
+        setAuthError(null); // Limpar erro se o perfil for carregado com sucesso
       }
     } catch (error) {
       console.error('💥 buscarPerfil: Erro inesperado:', error);
       setAuthError('Erro inesperado ao carregar perfil');
       setProfile(null);
     } finally {
-      console.log('🏁 buscarPerfil: Finalizando loading');
+      console.log('🏁 buscarPerfil: Finalizando loading do perfil');
       setLoading(false);
     }
   };
