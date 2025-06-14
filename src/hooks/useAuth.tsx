@@ -1,6 +1,6 @@
-
 import { useState, useEffect, createContext, useContext, useCallback } from 'react';
-import { supabase, type PerfilUsuario } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
+import type { PerfilUsuario } from '@/lib/supabase';
 import type { User } from '@supabase/supabase-js';
 
 interface AuthContextType {
@@ -39,7 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { data, error, status } = await supabase
         .from('profiles')
-        .select('id, nome, email, username, role, created_at')
+        .select('id, nome, email, role, created_at, updated_at')
         .eq('id', userId)
         .single();
 

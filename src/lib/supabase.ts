@@ -1,8 +1,7 @@
-
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = "https://niwmjfpyetfhthwloqms.supabase.co";
-const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pd21qZnB5ZXRmaHRod2xvcW1zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1MjUxMzQsImV4cCI6MjA2NTEwMTEzNH0.DgAMcL_Eyf-Bx75pppKadlNrtlfzqH3SCgplo2bkJc0";
+const supabaseUrl = "https://tbbifdwzuxxtbaheqgpy.supabase.co";
+const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRiYmlmZHd6dXh4dGJhaGVxZ3B5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk2ODk2NzcsImV4cCI6MjA2NTI2NTY3N30.A4XGZMQXDxWkpJKVxmk8uGM8cLz-ZySBKRqTXHBvdJM";
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
@@ -41,7 +40,7 @@ export interface PerfilUsuario {
   id: string;
   nome?: string;
   email?: string;
-  username?: string;
   role: 'admin_restaurante' | 'admin_hotel' | 'admin_total';
   created_at: string;
+  updated_at: string;
 }
